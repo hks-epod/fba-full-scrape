@@ -45,7 +45,7 @@ class MySpider(CrawlSpider):
                         active_job_cards.append(tr.find_all('td')[1].text)
             for item in active_job_cards:
                 job_card = item
-                url = 'http://164.100.129.4/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2015-2016'
+                url = 'http://164.100.129.4/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2016-2017'
                 start_urls.append(url)
 
     def handle_muster(self, response):
