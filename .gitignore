@@ -1,0 +1,5 @@
+*secrets.json
+*secrets.do
+*.pyc
+*.csv
+.DS_Store
