@@ -2,8 +2,8 @@ import scrapy
 from fba_full_scrapy.items import JobcardItem
 from fba_full_scrapy.items import MusterItem
 from scrapy.http.request import Request
-from scrapy.contrib.spiders import CrawlSpider, Rule
-from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 from bs4 import BeautifulSoup
 import csv
 import os
@@ -17,8 +17,8 @@ import urlparse
 muster_roll_codes = []
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
 input_dir = os.getcwd()+'/input'
-date = datetime.date.today().strftime("%d%b%Y")
-output_dir = os.getcwd()+'/full_output_'+date
+#date = datetime.date.today().strftime("%d%b%Y")
+output_dir = os.getcwd()+'/full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
@@ -29,6 +29,7 @@ class MySpider(CrawlSpider):
     br = mechanize.Browser()
     with open(gp_file, 'rU') as f:
         reader = csv.reader(f)
+        #For each panchayat in csv, go to job card link
         for row_in in reader:
             panchayat = row_in[5]
             url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
@@ -37,12 +38,14 @@ class MySpider(CrawlSpider):
             soup = BeautifulSoup(br.response().read())
             active_job_cards = []
             i=-1
+            # Identify HH's in panchayat with active job cards
             for tr in soup.find_all('table')[3].find_all('tr'):
                 i+=1
                 if i>0:
                     color = tr.find_all('td')[2].find('font')['color']
                     if color in colors['active']:
                         active_job_cards.append(tr.find_all('td')[1].text)
+            #Add active job card links to start url
             for item in active_job_cards:
                 job_card = item
                 url = 'http://164.100.129.4/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2016-2017'
@@ -56,6 +59,7 @@ class MySpider(CrawlSpider):
         if soup.find_all('table')[2].find('b').text!='The Values specified are wrong, Please enter Proper values' and soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"})!=None:
             panchayat = url.split('panchayat_code=')[1].split('&msrno')[0]
             mrTopData = [unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldatefrom"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldateto"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblSanctionDate"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkCode"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkName"}).text.encode('utf-8').strip().decode('utf-8'))]
+            # If link doesnt work, put empty rows/cols
             if soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'})==None:
                 item_data = [panchayat,'','','','','','','','','','','','','','','','','','','','','']+mrTopData
                 item = MusterItem()
@@ -140,7 +144,7 @@ class MySpider(CrawlSpider):
         soup = BeautifulSoup(response.body_as_unicode())
         url = response.url
         url = url.replace('%20',' ').strip()
-
+        #Get top-level job card info
         panchayat = url.split('Panchayat_Code=')[1].split('&')[0]
         job_card = url.split('reg_no=')[1].split('&')[0]
 
@@ -154,6 +158,7 @@ class MySpider(CrawlSpider):
         for tr in person_table:
             j += 1
             if j>1 and j<len(person_table)-1:
+                # Add job card level and individual level data
                 bottom_data = [unidecode(tr.find_all('td')[1].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[2].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[3].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[4].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[5].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[6].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[7].text.encode('utf-8').decode('utf-8'))]
                 item_data = top_data+bottom_data
                 item_data = [item.strip() for item in item_data]
@@ -181,6 +186,7 @@ class MySpider(CrawlSpider):
                 yield item
 
         muster_links = [link for link in response.xpath("//@href").extract() if 'musternew.aspx' in link]
+        # Get links to all muster rolls that individual has been listed on.
         for link in muster_links:
             work_code = link.split('workcode=')[1].split('&panchayat_code')[0]
             msr_no = link.split('msrno=')[1].split('&finyear')[0]
@@ -193,7 +199,7 @@ class MySpider(CrawlSpider):
             with open(output_dir+'/dates.csv', 'a') as f:
                 writer = csv.writer(f)
                 writer.writerow([dt_from,day,month,year,dt])
-            if [work_code,msr_no] not in muster_roll_codes and dt>=datetime.datetime(2015,05,01):
+            if [work_code,msr_no] not in muster_roll_codes and dt>=datetime.datetime(2015,9,1):
                 muster_roll_codes.append([work_code,msr_no])
                 url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
                 yield Request(url, self.handle_muster)

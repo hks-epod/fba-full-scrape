@@ -19,17 +19,17 @@ from twisted.internet.error import TimeoutError, DNSLookupError, \
         ConnectionRefusedError, ConnectionDone, ConnectError, \
         ConnectionLost, TCPTimedOutError
 
-from scrapy import log
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.response import response_status_message
 from scrapy.xlib.tx import ResponseFailed
 import datetime
+import logging
 import os
 import csv
 import sys
 
-date = datetime.date.today().strftime("%d%b%Y")
-output_dir = os.getcwd()+'/full_output_'+date
+#date = datetime.date.today().strftime("%d%b%Y")
+output_dir = os.getcwd()+'/full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
@@ -70,16 +70,16 @@ class RetryMiddleware(object):
         retries = request.meta.get('retry_times', 0) + 1
 
         if retries <= self.max_retry_times:
-            log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s",
-                    level=log.DEBUG, spider=spider, request=request, retries=retries, reason=reason)
+            logging.log(msg="Retrying %(request)s (failed %(retries)d times): %(reason)s",
+                    level=logging.DEBUG, spider=spider, request=request, retries=retries, reason=reason)
             retryreq = request.copy()
             retryreq.meta['retry_times'] = retries
             retryreq.dont_filter = True
             retryreq.priority = request.priority + self.priority_adjust
             return retryreq
         else:
-            log.msg(format="Gave up retrying %(request)s (failed %(retries)d times): %(reason)s",
-                    level=log.INFO, spider=spider, request=request, retries=retries, reason=reason)
+            logging.log(msg="Gave up retrying %(request)s (failed %(retries)d times): %(reason)s",
+                    level=logging.INFO, spider=spider, request=request, retries=retries, reason=reason)
             with open(output_dir+'/failed_connections.csv', 'a') as f:
                 writer = csv.writer(f)
                 writer.writerow([request.url,reason])

@@ -1,0 +1,1 @@
+0 21 * * * timeout —signal=INT 11h scrapy crawl all_job_cards -s JOBDIR=crawls/fba-scrape-1

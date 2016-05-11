@@ -7,13 +7,13 @@
 import os
 from scrapy import signals
 from scrapy.xlib.pydispatch import dispatcher
-from scrapy.contrib.exporter import CsvItemExporter
+from scrapy.exporter import CsvItemExporter
 import datetime
 from scrapy.mail import MailSender
 import sys
 
-date = datetime.date.today().strftime("%d%b%Y")
-output_dir = os.getcwd()+'/full_output_'+date
+#date = datetime.date.today().strftime("%d%b%Y")
+output_dir = os.getcwd()+'/full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
