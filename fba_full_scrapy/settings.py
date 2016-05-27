@@ -21,9 +21,9 @@ BOT_NAME = 'fba_full_scrapy'
 SPIDER_MODULES = ['fba_full_scrapy.spiders']
 NEWSPIDER_MODULE = 'fba_full_scrapy.spiders'
 ITEM_PIPELINES = {'fba_full_scrapy.pipelines.MultiCSVItemPipeline':0}
-DOWNLOADER_MIDDLEWARES = {'scrapy.downloadermiddleware.retry.RetryMiddleware':None,'fba_full_scrapy.retry.RetryMiddleware':500,}
-DOWNLOAD_HANDLERS : {
-    's3': None,
+DOWNLOADER_MIDDLEWARES = {'scrapy.downloadermiddleware.retry.RetryMiddleware':None,'fba_full_scrapy.retry.RetryMiddleware':500}
+DOWNLOAD_HANDLERS = {
+    's3': None
 }
 RETRY_TIMES = 19
 LOG_STDOUT = True
