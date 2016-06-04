@@ -27,6 +27,7 @@ class MySpider(CrawlSpider):
     start_urls = []
     gp_file = input_dir+'/gp list.csv'
     br = mechanize.Browser()
+    br.set_handle_robots(False)
     with open(gp_file, 'rU') as f:
         reader = csv.reader(f)
         #For each panchayat in csv, go to job card link
