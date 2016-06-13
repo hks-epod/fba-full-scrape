@@ -36,7 +36,7 @@ class MySpider(CrawlSpider):
             url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
             br.open(url)
             br.follow_link(text_regex='Job card/Employment Register')
-            soup = BeautifulSoup(br.response().read())
+            soup = BeautifulSoup(br.response().read(), 'html.parser')
             active_job_cards = []
             i=-1
             # Identify HH's in panchayat with active job cards
@@ -53,7 +53,7 @@ class MySpider(CrawlSpider):
                 start_urls.append(url)
 
     def handle_muster(self, response):
-        soup = BeautifulSoup(response.body_as_unicode())
+        soup = BeautifulSoup(response.body_as_unicode(), 'html.parser')
         url = response.url
         url = url.replace('%20',' ').strip()
         item_data = []
@@ -142,7 +142,7 @@ class MySpider(CrawlSpider):
                 writer.writerow([url])
 
     def parse(self, response):
-        soup = BeautifulSoup(response.body_as_unicode())
+        soup = BeautifulSoup(response.body_as_unicode(), 'html.parser')
         url = response.url
         url = url.replace('%20',' ').strip()
         #Get top-level job card info
