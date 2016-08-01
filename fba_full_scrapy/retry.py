@@ -29,7 +29,7 @@ import csv
 import sys
 
 #date = datetime.date.today().strftime("%d%b%Y")
-output_dir = os.getcwd()+'/full_output' #+date
+output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 

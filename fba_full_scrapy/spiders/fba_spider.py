@@ -13,44 +13,82 @@ import mechanize
 from scrapy import signals
 import sys
 import urlparse
+import pandas as pd
 
 muster_roll_codes = []
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
-input_dir = os.getcwd()+'/input'
+input_dir = './input'
 #date = datetime.date.today().strftime("%d%b%Y")
-output_dir = os.getcwd()+'/full_output' #+date
+output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 class MySpider(CrawlSpider):
     name = "all_job_cards"
     start_urls = []
-    gp_file = input_dir+'/gp list.csv'
-    br = mechanize.Browser()
-    br.set_handle_robots(False)
-    with open(gp_file, 'rU') as f:
-        reader = csv.reader(f)
-        #For each panchayat in csv, go to job card link
-        for row_in in reader:
-            panchayat = row_in[5]
-            url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
-            br.open(url)
-            br.follow_link(text_regex='Job card/Employment Register')
-            soup = BeautifulSoup(br.response().read(), 'html.parser')
-            active_job_cards = []
-            i=-1
-            # Identify HH's in panchayat with active job cards
-            for tr in soup.find_all('table')[3].find_all('tr'):
-                i+=1
-                if i>0:
-                    color = tr.find_all('td')[2].find('font')['color']
-                    if color in colors['active']:
-                        active_job_cards.append(tr.find_all('td')[1].text)
-            #Add active job card links to start url
-            for item in active_job_cards:
-                job_card = item
-                url = 'http://164.100.129.4/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2016-2017'
-                start_urls.append(url)
+    
+    if os.path.isfile(output_dir+'/jobcard.csv'): # need to find the starting point based on already scraped jobcards
+        
+        # have we scraped all the job cards?
+        # have we scraped all the musters?
+
+        jobcards = pd.read_csv(output_dir+'/jobcard.csv')
+        musters = pd.read_csv(output_dir+'/muster.csv')
+
+        muster_list = musters.to_dict(orient='records') # populate mr codes with already scraped ones
+        for muster in muster_list:
+            muster_roll_codes.append([muster['work_code'],muster['mr_no']])
+
+        job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
+
+        jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',on_left='job_card',on_right='job_card_number')
+        jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']]
+
+        if len(jc_df.index==0): # All the job cards have been scraped
+            # Find all the musters that haven't been scraped
+            encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'])
+
+            mr_df = pd.merge(encountered_muster_links,musters[['mr_no']].drop_duplicates(),how='left',on_left='msr_no',on_right='mr_no')
+            mr_df = mr_df[pd.isnull(mr_df.mr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
+            mr_df = mr_df[['job_card','url']].drop_duplicates() # we might end up with unique muster list but non-unique jc list
+            for job_card in mr_df.to_dict(orient='records'):
+                start_urls.append(job_card['url'])
+        else: # need to keep working on the job cards
+            for job_card in jc_df.to_dict(orient='records'):
+                start_urls.append(job_card['url'])
+
+
+    else: # populate job card links from job card directory page
+        gp_file = input_dir+'/gp list.csv'
+        br = mechanize.Browser()
+        br.set_handle_robots(False)
+        with open(gp_file, 'rU') as f:
+            reader = csv.reader(f)
+            #For each panchayat in csv, go to job card link
+            for row_in in reader:
+                panchayat = row_in[5]
+                url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
+                br.open(url)
+                br.follow_link(text_regex='Job card/Employment Register')
+                soup = BeautifulSoup(br.response().read(), 'html.parser')
+                active_job_cards = []
+                i=-1
+                # Identify HH's in panchayat with active job cards
+                for tr in soup.find_all('table')[3].find_all('tr'):
+                    i+=1
+                    if i>0:
+                        color = tr.find_all('td')[2].find('font')['color']
+                        if color in colors['active']:
+                            active_job_cards.append(tr.find_all('td')[1].text)
+                #Add active job card links to start url
+                for item in active_job_cards:
+                    job_card = item
+                    url = 'http://164.100.129.4/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2016-2017'
+                    start_urls.append(url)
+                    with open(output_dir+'/job_card_urls.csv', 'a') as f:
+                        writer = csv.writer(f)
+                        writer.writerow([job_card,url])
+
 
     def handle_muster(self, response):
         soup = BeautifulSoup(response.body_as_unicode(), 'html.parser')
@@ -189,19 +227,27 @@ class MySpider(CrawlSpider):
         muster_links = [link for link in response.xpath("//@href").extract() if 'musternew.aspx' in link]
         # Get links to all muster rolls that individual has been listed on.
         for link in muster_links:
-            work_code = link.split('workcode=')[1].split('&panchayat_code')[0]
-            msr_no = link.split('msrno=')[1].split('&finyear')[0]
+            # work_code = link.split('workcode=')[1].split('&panchayat_code')[0]
+            # msr_no = link.split('msrno=')[1].split('&finyear')[0]
             par = urlparse.parse_qs(urlparse.urlparse(link).query)
-            dt_from = par['dtfrm'][0]
-            day = int(dt_from[0:2])
-            month = int(dt_from[3:5])
-            year = int(dt_from[6:])
-            dt = datetime.datetime(year,month,day)
-            with open(output_dir+'/dates.csv', 'a') as f:
-                writer = csv.writer(f)
-                writer.writerow([dt_from,day,month,year,dt])
+            work_code = par['workcode']
+            msr_no = par['msrno']
+            # dt_from = par['dtfrm'][0]
+            # day = int(dt_from[0:2])
+            # month = int(dt_from[3:5])
+            # year = int(dt_from[6:])
+            # dt = datetime.datetime(year,month,day)
+            # with open(output_dir+'/dates.csv', 'a') as f:
+            #     writer = csv.writer(f)
+            #     writer.writerow([dt_from,day,month,year,dt])
+
+
             if [work_code,msr_no] not in muster_roll_codes and dt>=datetime.datetime(2015,9,1):
                 muster_roll_codes.append([work_code,msr_no])
-                url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
-                yield Request(url, self.handle_muster)
+                muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
+                with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
+                    writer = csv.writer(f)
+                    writer.writerow([job_card, url, msr_no, muster_url])
+                
+                yield Request(muster_url, self.handle_muster)
                 
