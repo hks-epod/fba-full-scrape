@@ -18,7 +18,7 @@ def check_job_card_urls():
 
 	job_card_counts = job_card_counts.fillna(0)
 
-	if len(job_card_counts[job_card_counts.count==0].index)==0:
+	if len(job_card_counts[job_card_counts.job_card==0].index)==0:
 		msg += 'List of job card urls was populated for all panchayats\r\n'
 	else:
 		msg += 'WARNING: list of job card urls doesn\'t contain all the study panchayats\r\nNeed to restart the scrape\r\n\r\n'
