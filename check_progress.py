@@ -52,7 +52,7 @@ def check_job_card_scrape():
 
 def check_muster_scrape():
 	msg = 'Checking the progress of the muster roll scrape against the list of encountered muster urls...\r\n'
-	msg += 'Note: list of encountered muster urls is populated from the job card pages and will grow until all job cards are scraped\r\n'
+	msg += 'Note: list of encountered muster roll urls is populated from the job card pages and will grow until all job cards are scraped\r\n'
 
 	musters = pd.read_csv(output_dir+'/muster.csv')
 
@@ -68,7 +68,7 @@ def check_muster_scrape():
 		mr_total = len(mr_df.index)
 		mr_scraped = mr_total - len(mr_notscraped_df.index)
 		mr_pct = "%.1f" % (float(mr_scraped)/float(mr_total))*100
-		msg += '%d of %d encountered muster urls have been scraped (%s%)\r\n' % (mr_scraped,mr_total,mr_pct)
+		msg += '%d of %d encountered muster roll urls have been scraped (%s%)\r\n' % (mr_scraped,mr_total,mr_pct)
 
 	msg += '\r\n'
 	
@@ -88,8 +88,8 @@ if __name__ == '__main__':
 
 	email_recipients = [
 		'edodge11@gmail.com',
-		'simone.schaner@dartmouth.edu',
-		'Patrick_Agte@hks.harvard.edu'
+		# 'simone.schaner@dartmouth.edu',
+		# 'Patrick_Agte@hks.harvard.edu'
 	]
 
 	msg_string = ''
