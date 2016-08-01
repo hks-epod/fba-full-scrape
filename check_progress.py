@@ -45,7 +45,7 @@ def check_job_card_scrape():
 		jc_total = len(jc_df.index)
 		jc_scraped = jc_total - len(jc_notscraped_df.index)
 		jc_pct = (float(jc_scraped)/float(jc_total))*100
-		msg += '%d of %d job cards have been scraped (%.1f%)\r\n' % (jc_scraped,jc_total,jc_pct)
+		msg += '{} of {} job cards have been scraped ({:.1f}%)\r\n'.format(jc_scraped,jc_total,jc_pct)
 
 	msg += '\r\n'
 	return msg
