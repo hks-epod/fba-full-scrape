@@ -44,7 +44,7 @@ class MySpider(CrawlSpider):
         jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',on_left='job_card',on_right='job_card_number')
         jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']]
 
-        if len(jc_df.index==0): # All the job cards have been scraped
+        if len(jc_df.index)==0: # All the job cards have been scraped
             # Find all the musters that haven't been scraped
             encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'])
 
