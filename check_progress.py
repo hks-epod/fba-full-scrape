@@ -67,8 +67,8 @@ def check_muster_scrape():
 	else:
 		mr_total = len(mr_df.index)
 		mr_scraped = mr_total - len(mr_notscraped_df.index)
-		mr_pct = "%.1f" % (float(mr_scraped)/float(mr_total))*100
-		msg += '%d of %d encountered muster roll urls have been scraped (%s%)\r\n' % (mr_scraped,mr_total,mr_pct)
+		mr_pct = (float(mr_scraped)/float(mr_total))*100
+		msg += '{} of {} encountered muster roll urls have been scraped ({:.1f}%)\r\n'.forat(mr_scraped,mr_total,mr_pct)
 
 	msg += '\r\n'
 	

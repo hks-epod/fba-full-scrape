@@ -249,5 +249,5 @@ class MySpider(CrawlSpider):
                     writer = csv.writer(f)
                     writer.writerow([job_card, url, msr_no, muster_url])
                 
-                yield Request(muster_url, self.handle_muster)
+                yield Request(muster_url, callback=self.handle_muster, priority=1)
                 
