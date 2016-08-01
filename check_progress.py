@@ -9,7 +9,7 @@ def check_job_card_urls():
 	msg = 'Checking the list of job card urls...\r\n'
 
 	job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
-	gp_list = pd.read_csv(input_dir+'/gp list.csv'header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'])
+	gp_list = pd.read_csv(input_dir+'/gp list.csv',header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'])
 
 	job_card_urls['panchayat_code'] = job_card_urls.url.apply(lambda x: x.split('Panchayat_Code=')[1].split('&')[0])
 	job_card_urls = job_card_urls[['panchayat_code','job_card']].drop_duplicates().groupby(['panchayat_code']).count().reset_index()
