@@ -232,11 +232,11 @@ class MySpider(CrawlSpider):
             par = urlparse.parse_qs(urlparse.urlparse(link).query)
             work_code = par['workcode']
             msr_no = par['msrno']
-            # dt_from = par['dtfrm'][0]
-            # day = int(dt_from[0:2])
-            # month = int(dt_from[3:5])
-            # year = int(dt_from[6:])
-            # dt = datetime.datetime(year,month,day)
+            dt_from = par['dtfrm'][0]
+            day = int(dt_from[0:2])
+            month = int(dt_from[3:5])
+            year = int(dt_from[6:])
+            dt = datetime.datetime(year,month,day)
             # with open(output_dir+'/dates.csv', 'a') as f:
             #     writer = csv.writer(f)
             #     writer.writerow([dt_from,day,month,year,dt])
