@@ -234,8 +234,8 @@ class MySpider(CrawlSpider):
             # work_code = link.split('workcode=')[1].split('&panchayat_code')[0]
             # msr_no = link.split('msrno=')[1].split('&finyear')[0]
             par = urlparse.parse_qs(urlparse.urlparse(link).query)
-            work_code = par['workcode']
-            msr_no = par['msrno']
+            work_code = par['workcode'][0]
+            msr_no = par['msrno'][0]
             dt_from = par['dtfrm'][0]
             day = int(dt_from[0:2])
             month = int(dt_from[3:5])
