@@ -59,7 +59,7 @@ class MySpider(CrawlSpider):
 
 
     else: # populate job card links from job card directory page
-        gp_file = input_dir+'/gp list.csv'
+        gp_file = input_dir+'/test gp list.csv'
         br = mechanize.Browser()
         br.set_handle_robots(False)
         with open(gp_file, 'rU') as f:
@@ -247,7 +247,7 @@ class MySpider(CrawlSpider):
                 muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
                 with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
                     writer = csv.writer(f)
-                    writer.writerow([job_card, url, msr_no, muster_url])
+                    writer.writerow([job_card.encode('utf-8'), url.encode('utf-8'), msr_no.encode('utf-8'), muster_url.encode('utf-8')])
                 
                 yield Request(muster_url, callback=self.handle_muster, priority=1)
                 
