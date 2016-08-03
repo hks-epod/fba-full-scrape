@@ -74,12 +74,16 @@ class MySpider(CrawlSpider):
                 active_job_cards = []
                 i=-1
                 # Identify HH's in panchayat with active job cards
-                for tr in soup.find_all('table')[3].find_all('tr'):
-                    i+=1
-                    if i>0:
-                        color = tr.find_all('td')[2].find('font')['color']
-                        if color in colors['active']:
-                            active_job_cards.append(tr.find_all('td')[1].text)
+                try:
+                    for tr in soup.find_all('table')[3].find_all('tr'):
+                        i+=1
+                        if i>0:
+                            color = tr.find_all('td')[2].find('font')['color']
+                            if color in colors['active']:
+                                active_job_cards.append(tr.find_all('td')[1].text)
+                except:
+                    sys.exit("Couldn't parse the job card directory table for url {}".format(url))
+
                 #Add active job card links to start url
                 for item in active_job_cards:
                     job_card = item
