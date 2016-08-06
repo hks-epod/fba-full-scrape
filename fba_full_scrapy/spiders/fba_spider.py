@@ -42,14 +42,14 @@ class MySpider(CrawlSpider):
 
         job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
 
-        jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',on_left='job_card',on_right='job_card_number')
+        jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
         jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']]
 
         if len(jc_df.index)==0: # All the job cards have been scraped
             # Find all the musters that haven't been scraped
             encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'])
 
-            mr_df = pd.merge(encountered_muster_links,musters[['mr_no']].drop_duplicates(),how='left',on_left='msr_no',on_right='mr_no')
+            mr_df = pd.merge(encountered_muster_links,musters[['mr_no']].drop_duplicates(),how='left',left_on='msr_no',right_on='mr_no')
             mr_df = mr_df[pd.isnull(mr_df.mr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
             mr_df = mr_df[['job_card','url']].drop_duplicates() # we might end up with unique muster list but non-unique jc list
             for job_card in mr_df.to_dict(orient='records'):
