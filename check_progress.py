@@ -9,7 +9,7 @@ def check_job_card_urls():
 	msg = 'Checking the list of job card urls...\r\n'
 
 	job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
-	gp_list = pd.read_csv(input_dir+'/gp list.csv',header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'],dtype={'panchayat_code':object})
+	gp_list = pd.read_csv(input_dir+'/test gp list.csv',header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'],dtype={'panchayat_code':object})
 
 	job_card_urls['panchayat_code'] = job_card_urls.url.apply(lambda x: x.split('Panchayat_Code=')[1].split('&')[0])
 	job_card_urls = job_card_urls[['panchayat_code','job_card']].drop_duplicates().groupby(['panchayat_code']).count().reset_index()
@@ -22,7 +22,7 @@ def check_job_card_urls():
 		msg += 'List of job card urls was populated for all panchayats\r\n'
 	else:
 		msg += 'WARNING: list of job card urls doesn\'t contain all the study panchayats\r\nNeed to restart the scrape\r\n\r\n'
-		msg += job_card_counts[job_card_counts.count==0].to_string()
+		msg += job_card_counts[job_card_counts.job_card==0].to_string()
 		msg += '\r\n'
 
 	msg += '\r\n'
@@ -68,7 +68,7 @@ def check_muster_scrape():
 		mr_total = len(mr_df.index)
 		mr_scraped = mr_total - len(mr_notscraped_df.index)
 		mr_pct = (float(mr_scraped)/float(mr_total))*100
-		msg += '{} of {} encountered muster roll urls have been scraped ({:.1f}%)\r\n'.forat(mr_scraped,mr_total,mr_pct)
+		msg += '{} of {} encountered muster roll urls have been scraped ({:.1f}%)\r\n'.format(mr_scraped,mr_total,mr_pct)
 
 	msg += '\r\n'
 	
