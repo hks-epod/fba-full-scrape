@@ -242,7 +242,7 @@ class MySpider(CrawlSpider):
 
 
                 if not ((mr_tracker.msr_no==msr_no) & (mr_tracker.work_code==work_code)).any() and dt>=datetime.datetime(2015,9,1): # If we don't find the msr_no/work_code in the scraped data and the date is since 9/1/2016 we want to crawl it
-                    mr_tracker.append({'work_code':work_code,'msr_no':msr_no},ignore_index=True)
+                    mr_tracker = mr_tracker.append({'work_code':work_code,'msr_no':msr_no},ignore_index=True)
                     muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
                     with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
                         writer = csv.writer(f)
