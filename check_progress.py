@@ -57,10 +57,12 @@ def check_muster_scrape():
 	musters = pd.read_csv(output_dir+'/muster.csv')
 
 	# Find all the musters that haven't been scraped
-	encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'])
+	encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'],encoding='utf-8')
 
-	mr_df = pd.merge(encountered_muster_links,musters[['mr_no']].drop_duplicates(),how='left',left_on='msr_no',right_on='mr_no')
-	mr_notscraped_df = mr_df[pd.isnull(mr_df.mr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
+	# 
+	mr_df = pd.merge(encountered_muster_links,musters[['msr_no']].drop_duplicates(),how='left',on='msr_no')
+	
+	mr_notscraped_df = mr_df[pd.isnull(mr_df.msr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
 
 	if len(mr_notscraped_df.index)==0:
 		msg += 'All the encountered muster roll urls have been scraped\r\n'

@@ -16,7 +16,6 @@ import urlparse
 import pandas as pd
 import logging
 
-muster_roll_codes = []
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
 input_dir = './input'
 #date = datetime.date.today().strftime("%d%b%Y")
@@ -35,11 +34,9 @@ class MySpider(CrawlSpider):
 
         jobcards = pd.read_csv(output_dir+'/jobcard.csv')
         musters = pd.read_csv(output_dir+'/muster.csv')
-
-        muster_list = musters.to_dict(orient='records') # populate mr codes with already scraped ones
-        for muster in muster_list:
-            muster_roll_codes.append([muster['work_code'],muster['mr_no']])
-
+        
+        mr_tracker = musters[['work_code','msr_no']] # this is where we'll check for duplicate musters
+        
         job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
 
         jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
@@ -49,8 +46,8 @@ class MySpider(CrawlSpider):
             # Find all the musters that haven't been scraped
             encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'])
 
-            mr_df = pd.merge(encountered_muster_links,musters[['mr_no']].drop_duplicates(),how='left',left_on='msr_no',right_on='mr_no')
-            mr_df = mr_df[pd.isnull(mr_df.mr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
+            mr_df = pd.merge(encountered_muster_links,musters[['msr_no']].drop_duplicates(),how='left',on='msr_no')
+            mr_df = mr_df[pd.isnull(mr_df.msr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
             mr_df = mr_df[['job_card','url']].drop_duplicates() # we might end up with unique muster list but non-unique jc list
             for job_card in mr_df.to_dict(orient='records'):
                 start_urls.append(job_card['url'])
@@ -130,7 +127,7 @@ class MySpider(CrawlSpider):
                 item['payment_date'] = item_data[19]
                 item['signature'] = item_data[20]
                 item['ac_credited_date'] = item_data[21]
-                item['mr_no'] = item_data[22]
+                item['msr_no'] = item_data[22]
                 item['work_start_date'] = item_data[23]
                 item['work_end_date'] = item_data[24]
                 item['work_approval_date'] = item_data[25]
@@ -173,7 +170,7 @@ class MySpider(CrawlSpider):
                         item['payment_date'] = item_data[19]
                         item['signature'] = item_data[20]
                         item['ac_credited_date'] = item_data[21]
-                        item['mr_no'] = item_data[22]
+                        item['msr_no'] = item_data[22]
                         item['work_start_date'] = item_data[23]
                         item['work_end_date'] = item_data[24]
                         item['work_approval_date'] = item_data[25]
@@ -234,8 +231,6 @@ class MySpider(CrawlSpider):
             muster_links = [link for link in response.xpath("//@href").extract() if 'musternew.aspx' in link]
             # Get links to all muster rolls that individual has been listed on.
             for link in muster_links:
-                # work_code = link.split('workcode=')[1].split('&panchayat_code')[0]
-                # msr_no = link.split('msrno=')[1].split('&finyear')[0]
                 par = urlparse.parse_qs(urlparse.urlparse(link).query)
                 work_code = par['workcode'][0]
                 msr_no = par['msrno'][0]
@@ -244,13 +239,10 @@ class MySpider(CrawlSpider):
                 month = int(dt_from[3:5])
                 year = int(dt_from[6:])
                 dt = datetime.datetime(year,month,day)
-                # with open(output_dir+'/dates.csv', 'a') as f:
-                #     writer = csv.writer(f)
-                #     writer.writerow([dt_from,day,month,year,dt])
 
 
-                if [work_code,msr_no] not in muster_roll_codes and dt>=datetime.datetime(2015,9,1):
-                    muster_roll_codes.append([work_code,msr_no])
+                if not ((mr_tracker.msr_no==msr_no) & (mr_tracker.work_code==work_code)).any() and dt>=datetime.datetime(2015,9,1): # If we don't find the msr_no/work_code in the scraped data and the date is since 9/1/2016 we want to crawl it
+                    mr_tracker = mr_tracker.append({'work_code':work_code,'msr_no':msr_no},ignore_index=True)
                     muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
                     with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
                         writer = csv.writer(f)
