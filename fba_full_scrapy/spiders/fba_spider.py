@@ -18,6 +18,7 @@ import logging
 
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
 input_dir = './input'
+gp_file = 'test gp list.csv'
 #date = datetime.date.today().strftime("%d%b%Y")
 output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
@@ -27,40 +28,10 @@ class MySpider(CrawlSpider):
     name = "all_job_cards"
     start_urls = []
     
-    if os.path.isfile(output_dir+'/jobcard.csv'): # need to find the starting point based on already scraped jobcards
-        
-        # have we scraped all the job cards?
-        # have we scraped all the musters?
-
-        jobcards = pd.read_csv(output_dir+'/jobcard.csv')
-        musters = pd.read_csv(output_dir+'/muster.csv')
-        
-        mr_tracker = musters[['work_code','msr_no']] # this is where we'll check for duplicate musters
-        
-        job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
-
-        jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
-        jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']]
-
-        if len(jc_df.index)==0: # All the job cards have been scraped
-            # Find all the musters that haven't been scraped
-            encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'])
-
-            mr_df = pd.merge(encountered_muster_links,musters[['msr_no']].drop_duplicates(),how='left',on='msr_no')
-            mr_df = mr_df[pd.isnull(mr_df.msr_no)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
-            mr_df = mr_df[['job_card','url']].drop_duplicates() # we might end up with unique muster list but non-unique jc list
-            for job_card in mr_df.to_dict(orient='records'):
-                start_urls.append(job_card['url'])
-        else: # need to keep working on the job cards
-            for job_card in jc_df.to_dict(orient='records'):
-                start_urls.append(job_card['url'])
-
-
-    else: # populate job card links from job card directory page
-        gp_file = input_dir+'/test gp list.csv'
+    def populate_job_card_urls():
         br = mechanize.Browser()
         br.set_handle_robots(False)
-        with open(gp_file, 'rU') as f:
+        with open(input_dir + '/'+ gp_file, 'rU') as f:
             reader = csv.reader(f)
             #For each panchayat in csv, go to job card link
             for row_in in reader:
@@ -90,6 +61,74 @@ class MySpider(CrawlSpider):
                     with open(output_dir+'/job_card_urls.csv', 'a') as f:
                         writer = csv.writer(f)
                         writer.writerow([job_card,url])
+
+    def get_mr_tracker():
+        if os.path.isfile(output_dir+'/muster.csv'):
+            musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8')
+        else:
+            musters = pd.DataFrame({'work_code':[],'msr_no':[]})
+        
+        mr_tracker = musters[['work_code','msr_no']] # this is where we'll check for duplicate musters
+
+        return mr_tracker
+
+    def get_unscraped_musters():
+
+        if os.path.isfile(output_dir+'/muster.csv'):
+            musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8')
+        else:
+            musters = pd.DataFrame({'work_code':[],'msr_no':[]})
+        
+        encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'])
+
+        musters['right'] = 1
+        
+        mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code']].drop_duplicates(),how='left',on=['msr_no','work_code'])
+        mr_df = mr_df[pd.isnull(mr_df.right)].drop_duplicates(subset=['msr_no','work_code']) # keep the musters that haven't been scraped yet, drop duplicate musters
+        
+        return mr_df
+
+    def get_unscraped_jobcards():
+
+        if os.path.isfile(output_dir+'/jobcard.csv'):
+            jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8')
+        else:
+            jobcards = pd.DataFrame('job_card_number':[])
+
+        job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url']) # get the master list of job card urls to scrape
+
+        jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
+        
+        jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']] # keep the job cards that haven't been scraped yet, drop duplicate job cards
+
+        return jc_df
+
+    #######################
+
+    # start/restart businuess goes here
+    
+    if not os.path.isfile(output_dir+'/job_card_urls.csv'): # this is the first time through the scrape, need to populate the inital list of job card urls
+        populate_job_card_urls()
+
+    else: # need to see how far along in the scrape we are
+ 
+        # take card of the muster rolls first. this way we can mark them in the tracker before the job card requests start populating the encountered muster urls
+        mr_tracker = get_mr_tracker()
+        mr_df = get_unscraped_musters()
+
+        # pass the unscraped musters as Requests, mark them in the tracker
+        muster_list = mr_df.to_dict(orient='records')
+        for muster in muster_list:
+            mr_tracker = mr_tracker.append({'work_code':muster['work_code'],'msr_no':muster['msr_no']},ignore_index=True)
+            yield Request(muster['muster_url'], callback=self.handle_muster, priority=1)
+
+        # Now take care of the job cards
+        jc_df = get_unscraped_jobcards()
+
+        # add the unscraped job cards to the queue
+        jc_list = jc_df.to_dict(orient='records')
+        for job_card in jc_list:
+            start_urls.append(job_card['url'])
 
 
     def handle_muster(self, response):
@@ -246,7 +285,7 @@ class MySpider(CrawlSpider):
                     muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
                     with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
                         writer = csv.writer(f)
-                        writer.writerow([job_card.encode('utf-8'), url.encode('utf-8'), msr_no.encode('utf-8'), muster_url.encode('utf-8')])
+                        writer.writerow([job_card.encode('utf-8'), url.encode('utf-8'), msr_no.encode('utf-8'), muster_url.encode('utf-8'), work_code.encode('utf-8')])
                     
                     yield Request(muster_url, callback=self.handle_muster, priority=1)
         
