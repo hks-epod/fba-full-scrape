@@ -7,7 +7,7 @@
 import os
 from scrapy import signals
 from scrapy.xlib.pydispatch import dispatcher
-from scrapy.contrib.exporter import CsvItemExporter
+from scrapy.exporters import CsvItemExporter
 import datetime
 from scrapy.mail import MailSender
 import sys
