@@ -53,7 +53,7 @@ class MusterItem(scrapy.Item):
     payment_date = scrapy.Field()
     signature = scrapy.Field()
     ac_credited_date = scrapy.Field()
-    mr_no = scrapy.Field()
+    msr_no = scrapy.Field()
     work_start_date = scrapy.Field()
     work_end_date = scrapy.Field()
     work_approval_date = scrapy.Field()
