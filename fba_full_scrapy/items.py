@@ -50,7 +50,6 @@ class MusterItem(scrapy.Item):
     po_address_branch_code = scrapy.Field()
     wagelist_no = scrapy.Field()
     status = scrapy.Field()
-    payment_date = scrapy.Field()
     signature = scrapy.Field()
     ac_credited_date = scrapy.Field()
     msr_no = scrapy.Field()
