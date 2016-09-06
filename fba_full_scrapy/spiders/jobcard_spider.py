@@ -78,7 +78,7 @@ class MySpider(CrawlSpider):
         if os.path.isfile(output_dir+'/jobcard.csv'):
             jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8')
         else:
-            jobcards = pd.DataFrame('job_card_number':[])
+            jobcards = pd.DataFrame({'job_card_number':[]})
 
         job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url']) # get the master list of job card urls to scrape
 

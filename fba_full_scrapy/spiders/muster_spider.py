@@ -25,35 +25,6 @@ output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-muster_headers = [
-    u'',
-    u'नाम/पंजीकरण संख्या',
-    u'Aadhaar No',
-    u'जाति',
-    u'गांव',
-    u'1',
-    u'2',
-    u'3',
-    u'4',
-    u'5',
-    u'6',
-    u'7',
-    u'कुल हाजिरी',
-    u'प्रतिदन मजदूर (माप के अनुसार )',
-    u'देय राशि',
-    u'यात्रा और खान पान का व्यय',
-    u'\u0914\u095b\u093e\u0930 \u0938\u092e\u094d\u092c\u0902\u0927\u093f\u0924 \u092d\u0941\u0917\u0924\u093e\u0928',
-    u'कुल नकद भुगतान',
-    u'खाता क्रमांक',
-    u'Postoffice/Bank Name',
-    u'Postoffice Code/Branch name',
-    u'Postoffice address/Branch code',
-    u'Wagelist No.',
-    u'Status',
-    u'A/c Credited Date',
-    u'हस्ताक्षर/अगुठे का निशान'
-]
-
 class MySpider(CrawlSpider):
     name = "all_musters"
     start_urls = []
@@ -69,7 +40,7 @@ class MySpider(CrawlSpider):
 
         musters['right'] = 1
         
-        mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code']].drop_duplicates(),how='left',on=['msr_no','work_code'])
+        mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code','right']].drop_duplicates(),how='left',on=['msr_no','work_code'])
         mr_df = mr_df[pd.isnull(mr_df.right)].drop_duplicates(subset=['msr_no','work_code']) # keep the musters that haven't been scraped yet, drop duplicate musters
         
         return mr_df
@@ -137,8 +108,39 @@ class MySpider(CrawlSpider):
                 yield item
             else:
 
+                days = [] # Need to get which columns contain the days worked -- if the header is an integer, it's one of the days worked columns
+                for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
+                    try:
+                        int(th.text)
+                        days.append(th.text)
+                    except:
+                        pass
+
+                # Need to add in the days headers which can be variable length
+                muster_headers = [
+                    u'',
+                    u'नाम/पंजीकरण संख्या',
+                    u'Aadhaar No',
+                    u'जाति',
+                    u'गांव'] + days + [
+                    u'कुल हाजिरी',
+                    u'प्रतिदन मजदूर (माप के अनुसार )',
+                    u'देय राशि',
+                    u'यात्रा और खान पान का व्यय',
+                    u'\u0914\u095b\u093e\u0930 \u0938\u092e\u094d\u092c\u0902\u0927\u093f\u0924 \u092d\u0941\u0917\u0924\u093e\u0928',
+                    u'कुल नकद भुगतान',
+                    u'खाता क्रमांक',
+                    u'Postoffice/Bank Name',
+                    u'Postoffice Code/Branch name',
+                    u'Postoffice address/Branch code',
+                    u'Wagelist No.',
+                    u'Status',
+                    u'A/c Credited Date',
+                    u'हस्ताक्षर/अगुठे का निशान'
+                ]
+
                 # Check the number of muster column headers
-                if len(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'))!=26:
+                if len(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')) != len(muster_headers):
                     logging.info("Found the wrong number of muster column headers for url: " + url)
 
                 # Check if the column headers have changed
@@ -150,13 +152,6 @@ class MySpider(CrawlSpider):
                 if headers_correct==False:
                     logging.info("Incorrect muster column headers found for url: "+url)
 
-                days = list() # Need to get which columns contain the days worked -- if the header is an integer, it's one of the days worked columns
-                for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
-                    try:
-                        int(th.text)
-                        days.append(th.text)
-                    except:
-                        pass
                 for tr in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[1:-1]:
                     
                     # Get Aadhar number, SC/ST status, Village name
