@@ -40,7 +40,8 @@ def check_job_card_scrape():
 	jc_notscraped_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']]
 
 	if len(jc_notscraped_df.index)==0:
-		msg += 'All the job cards have been scraped\r\n'
+		jc_total = len(jc_df.index)
+		msg += 'All {} of the job cards have been scraped\r\n'.format(jc_total)
 	else:
 		jc_total = len(jc_df.index)
 		jc_scraped = jc_total - len(jc_notscraped_df.index)
@@ -58,15 +59,16 @@ def check_muster_scrape():
 	musters['right'] = 1
 
 	# Find all the musters that haven't been scraped
-	encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url'],encoding='utf-8')
+	encountered_muster_links = pd.read_csv(output_dir+'/encountered_unique.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],encoding='utf-8')
 
 
-	mr_df = pd.merge(encountered_muster_links,musters[['msr_no','right']].drop_duplicates(),how='left',on='msr_no')
+	mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code','right']].drop_duplicates(),how='left',on=['msr_no','work_code'])
 	
 	mr_notscraped_df = mr_df[pd.isnull(mr_df.right)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
 
 	if len(mr_notscraped_df.index)==0:
-		msg += 'All the encountered muster roll urls have been scraped\r\n'
+		mr_total = len(mr_df.index)
+		msg += 'All {} of the encountered muster roll urls have been scraped\r\n'.format(mr_total)
 	else:
 		mr_total = len(mr_df.index)
 		mr_scraped = mr_total - len(mr_notscraped_df.index)
@@ -101,5 +103,6 @@ if __name__ == '__main__':
 	msg_string += check_job_card_scrape()
 	msg_string += check_muster_scrape()
 
-	send_email(email_recipients,msg_string)
+	print msg_string
+	# send_email(email_recipients,msg_string)
 
