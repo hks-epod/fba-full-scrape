@@ -4,8 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 
-headers = [
-    '',
+muster_headers = [
+    u'',
     u'नाम/पंजीकरण संख्या',
     u'Aadhaar No',
     u'जाति',
@@ -21,7 +21,7 @@ headers = [
     u'प्रतिदन मजदूर (माप के अनुसार )',
     u'देय राशि',
     u'यात्रा और खान पान का व्यय',
-    u'औज़ार सम्बंधित भुगतान',
+    u'\u0914\u095b\u093e\u0930 \u0938\u092e\u094d\u092c\u0902\u0927\u093f\u0924 \u092d\u0941\u0917\u0924\u093e\u0928',
     u'कुल नकद भुगतान',
     u'खाता क्रमांक',
     u'Postoffice/Bank Name',
@@ -85,18 +85,19 @@ if soup.find_all('table')[2].find('b').text!='The Values specified are wrong, Pl
         item['work_name'] = item_data[26]
         print item
     else:
+
+        # Check the number of muster column headers
+        if len(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'))!=26:
+            logging.info("Found the wrong number of muster column headers for url: " + url)
+
         # Check if the column headers have changed
         headers_correct = True
         for i,th in enumerate(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')):
-            test = th.text.strip().encode('utf-8')==headers[i].strip().encode('utf-8')
-            print test
+            test = th.text.strip()==muster_headers[i].strip()
             if test==False:
-                print th.text.strip().encode('utf-8').decode('utf-8')
-                print headers[i].strip().encode('utf-8')
-
-
-        if len(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'))!=26:
-            logging.info("Found the wrong number of column headers for muster: " + url)
+                headers_correct = False
+        if headers_correct==False:
+            logging.info("Incorrect muster column headers found for url: "+url)
 
         days = list() # Need to get which columns contain the days worked -- if the header is an integer, it's one of the days worked columns
         for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):

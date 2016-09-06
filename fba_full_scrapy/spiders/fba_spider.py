@@ -24,6 +24,35 @@ output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
+muster_headers = [
+    u'',
+    u'नाम/पंजीकरण संख्या',
+    u'Aadhaar No',
+    u'जाति',
+    u'गांव',
+    u'1',
+    u'2',
+    u'3',
+    u'4',
+    u'5',
+    u'6',
+    u'7',
+    u'कुल हाजिरी',
+    u'प्रतिदन मजदूर (माप के अनुसार )',
+    u'देय राशि',
+    u'यात्रा और खान पान का व्यय',
+    u'\u0914\u095b\u093e\u0930 \u0938\u092e\u094d\u092c\u0902\u0927\u093f\u0924 \u092d\u0941\u0917\u0924\u093e\u0928',
+    u'कुल नकद भुगतान',
+    u'खाता क्रमांक',
+    u'Postoffice/Bank Name',
+    u'Postoffice Code/Branch name',
+    u'Postoffice address/Branch code',
+    u'Wagelist No.',
+    u'Status',
+    u'A/c Credited Date',
+    u'हस्ताक्षर/अगुठे का निशान'
+]
+
 class MySpider(CrawlSpider):
     name = "all_job_cards"
     start_urls = []
@@ -39,7 +68,7 @@ class MySpider(CrawlSpider):
                 url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
                 br.open(url)
                 br.follow_link(text_regex='Job card/Employment Register')
-                soup = BeautifulSoup(br.response().read(), 'html.parser')
+                soup = BeautifulSoup(br.response().read(), 'lxml')
                 active_job_cards = []
                 i=-1
                 # Identify HH's in panchayat with active job cards
@@ -132,97 +161,138 @@ class MySpider(CrawlSpider):
 
 
     def handle_muster(self, response):
-        soup = BeautifulSoup(response.body_as_unicode(), 'html.parser')
+        soup = BeautifulSoup(response.body_as_unicode(), 'lxml')
         url = response.url
         url = url.replace('%20',' ').strip()
         item_data = []
         # logging.info("Made it to the muster page for "+url) 
         if soup.find_all('table')[2].find('b').text!='The Values specified are wrong, Please enter Proper values' and soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"})!=None:
-            panchayat = url.split('panchayat_code=')[1].split('&msrno')[0]
-            mrTopData = [unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldatefrom"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldateto"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblSanctionDate"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkCode"}).text.encode('utf-8').strip().decode('utf-8')),unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkName"}).text.encode('utf-8').strip().decode('utf-8'))]
-            # If link doesnt work, put empty rows/cols
-            if soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'})==None:
-                item_data = [panchayat,'','','','','','','','','','','','','','','','','','','','','']+mrTopData
-                item = MusterItem()
-                item['panchayat_code'] = item_data[0]
-                item['job_card_number'] = item_data[1]
-                item['worker_name'] = item_data[2]
-                item['aadhar_no'] = item_data[3]
-                item['sc_st_category'] = item_data[4]
-                item['village_name'] = item_data[5]
-                item['present'] = item_data[6]
-                item['days_worked'] = item_data[7]
-                item['average_daily_wage'] = item_data[8]
-                item['dues'] = item_data[9]
-                item['travel_food_expenses'] = item_data[10]
-                item['tool_payments'] = item_data[11]
-                item['total_cash_payments'] = item_data[12]
-                item['account_no'] = item_data[13]
-                item['bank_po_name'] = item_data[14]
-                item['po_code_branch_name'] = item_data[15]
-                item['po_address_branch_code'] = item_data[16]
-                item['wagelist_no'] = item_data[17]
-                item['status'] = item_data[18]
-                item['payment_date'] = item_data[19]
-                item['signature'] = item_data[20]
-                item['ac_credited_date'] = item_data[21]
-                item['msr_no'] = item_data[22]
-                item['work_start_date'] = item_data[23]
-                item['work_end_date'] = item_data[24]
-                item['work_approval_date'] = item_data[25]
-                item['work_code'] = item_data[26]
-                item['work_name'] = item_data[27]
-                yield item
-            else:
-                days = list()
-                for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
-                    try:
-                        int(th.text)
-                        days.append(th.text)
-                    except:
-                        pass
-                for tr in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[1:-1]:
-                        temp_list = [unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[2:5]]
-                        temp_list = temp_list+[';'.join([str(p+1) if val.text.strip()=='P' else '' for p,val in enumerate(tr.find_all('td')[5:5+len(days)])])]
-                        temp_list = temp_list+[unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[5+len(days):]]
-                        item_data = [panchayat,unidecode(tr.find_all('td')[1].find('a').text.encode('utf-8').strip().decode('utf-8')),unidecode(tr.find_all('td')[1].find('a').previous_sibling.previous_sibling.encode('utf-8').strip().decode('utf-8'))]+temp_list+mrTopData
-                        item = MusterItem()
-                        item['panchayat_code'] = item_data[0]
-                        item['job_card_number'] = item_data[1]
-                        item['worker_name'] = item_data[2]
-                        item['aadhar_no'] = item_data[3]
-                        item['sc_st_category'] = item_data[4]
-                        item['village_name'] = item_data[5]
-                        item['present'] = item_data[6]
-                        item['days_worked'] = item_data[7]
-                        item['average_daily_wage'] = item_data[8]
-                        item['dues'] = item_data[9]
-                        item['travel_food_expenses'] = item_data[10]
-                        item['tool_payments'] = item_data[11]
-                        item['total_cash_payments'] = item_data[12]
-                        item['account_no'] = item_data[13]
-                        item['bank_po_name'] = item_data[14]
-                        item['po_code_branch_name'] = item_data[15]
-                        item['po_address_branch_code'] = item_data[16]
-                        item['wagelist_no'] = item_data[17]
-                        item['status'] = item_data[18]
-                        item['payment_date'] = item_data[19]
-                        item['signature'] = item_data[20]
-                        item['ac_credited_date'] = item_data[21]
-                        item['msr_no'] = item_data[22]
-                        item['work_start_date'] = item_data[23]
-                        item['work_end_date'] = item_data[24]
-                        item['work_approval_date'] = item_data[25]
-                        item['work_code'] = item_data[26]
-                        item['work_name'] = item_data[27]
-                        yield item
+    panchayat = url.split('panchayat_code=')[1].split('&msrno')[0]
+    mrTopData = [
+        unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),
+        unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldatefrom"}).text.encode('utf-8').strip().decode('utf-8')),
+        unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldateto"}).text.encode('utf-8').strip().decode('utf-8')),
+        unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblSanctionDate"}).text.encode('utf-8').strip().decode('utf-8')),
+        unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkCode"}).text.encode('utf-8').strip().decode('utf-8')),
+        unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkName"}).text.encode('utf-8').strip().decode('utf-8'))
+    ]
+
+    # If link doesnt work (ie table doesn't show up), put empty rows/cols
+    if soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'})==None:
+        item_data = [panchayat,'','','','','','','','','','','','','','','','','','','','']+mrTopData
+        item = MusterItem()
+        item['panchayat_code'] = item_data[0]
+        item['job_card_number'] = item_data[1]
+        item['worker_name'] = item_data[2]
+        item['aadhar_no'] = item_data[3]
+        item['sc_st_category'] = item_data[4]
+        item['village_name'] = item_data[5]
+        item['present'] = item_data[6]
+        item['days_worked'] = item_data[7]
+        item['average_daily_wage'] = item_data[8]
+        item['dues'] = item_data[9]
+        item['travel_food_expenses'] = item_data[10]
+        item['tool_payments'] = item_data[11]
+        item['total_cash_payments'] = item_data[12]
+        item['account_no'] = item_data[13]
+        item['bank_po_name'] = item_data[14]
+        item['po_code_branch_name'] = item_data[15]
+        item['po_address_branch_code'] = item_data[16]
+        item['wagelist_no'] = item_data[17]
+        item['status'] = item_data[18]
+        item['signature'] = item_data[19]
+        item['ac_credited_date'] = item_data[20]
+        item['msr_no'] = item_data[21]
+        item['work_start_date'] = item_data[22]
+        item['work_end_date'] = item_data[23]
+        item['work_approval_date'] = item_data[24]
+        item['work_code'] = item_data[25]
+        item['work_name'] = item_data[26]
+        yield item
+    else:
+
+        # Check the number of muster column headers
+        if len(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'))!=26:
+            logging.info("Found the wrong number of muster column headers for url: " + url)
+
+        # Check if the column headers have changed
+        headers_correct = True
+        for i,th in enumerate(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')):
+            test = th.text.strip()==muster_headers[i].strip()
+            if test==False:
+                headers_correct = False
+        if headers_correct==False:
+            logging.info("Incorrect muster column headers found for url: "+url)
+
+        days = list() # Need to get which columns contain the days worked -- if the header is an integer, it's one of the days worked columns
+        for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
+            try:
+                int(th.text)
+                days.append(th.text)
+            except:
+                pass
+        for tr in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[1:-1]:
+            
+            # Get Aadhar number, SC/ST status, Village name
+            temp_list = [
+                unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[2:5]
+            ]
+
+            # Get the columns showing which days they were present and consolidate it into a single field            
+            temp_list += [
+                ';'.join([str(p+1) if val.text.strip()=='P' else '' for p,val in enumerate(tr.find_all('td')[5:5+len(days)])])
+            ]
+
+            # Get the rest of the columns in the row            
+            temp_list += [
+                unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[5+len(days):]
+            ]
+
+            # Add the panchayat code, worker name, job card
+            item_data = [
+                panchayat, # Panchayat code
+                unidecode(tr.find_all('td')[1].find('a').text.encode('utf-8').strip().decode('utf-8')), # Worker name
+                unidecode(tr.find_all('td')[1].find('a').previous_sibling.previous_sibling.encode('utf-8').strip().decode('utf-8')) # Job card number
+            ] + temp_list + mrTopData
+
+            item = MusterItem()
+            item['panchayat_code'] = item_data[0]
+            item['job_card_number'] = item_data[1]
+            item['worker_name'] = item_data[2]
+            item['aadhar_no'] = item_data[3]
+            item['sc_st_category'] = item_data[4]
+            item['village_name'] = item_data[5]
+            item['present'] = item_data[6]
+            item['days_worked'] = item_data[7]
+            item['average_daily_wage'] = item_data[8]
+            item['dues'] = item_data[9]
+            item['travel_food_expenses'] = item_data[10]
+            item['tool_payments'] = item_data[11]
+            item['total_cash_payments'] = item_data[12]
+            item['account_no'] = item_data[13]
+            item['bank_po_name'] = item_data[14]
+            item['po_code_branch_name'] = item_data[15]
+            item['po_address_branch_code'] = item_data[16]
+            item['wagelist_no'] = item_data[17]
+            item['status'] = item_data[18]
+            item['ac_credited_date'] = item_data[19]
+            item['signature'] = item_data[20]
+            item['msr_no'] = item_data[21]
+            item['work_start_date'] = item_data[22]
+            item['work_end_date'] = item_data[23]
+            item['work_approval_date'] = item_data[24]
+            item['work_code'] = item_data[25]
+            item['work_name'] = item_data[26]
+
+            yield item
+
         else:
             with open(output_dir+'/bad_mr_links.csv', 'a') as f:
                 writer = csv.writer(f)
                 writer.writerow([url])
 
     def parse(self, response):
-        soup = BeautifulSoup(response.body_as_unicode(), 'html.parser')
+        soup = BeautifulSoup(response.body_as_unicode(), 'lxml')
         url = response.url
         url = url.replace('%20',' ').strip()
         #Get top-level job card info
