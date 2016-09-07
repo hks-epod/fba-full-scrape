@@ -7,7 +7,7 @@ import os
 input_dir = './input'
 output_dir = './full_output'
 
-gp_file = input_dir + '/test gp list.csv'
+gp_file = input_dir + '/gp list.csv'
 
 def check_job_card_urls():
 	msg = 'Checking the list of job card urls...\r\n'
