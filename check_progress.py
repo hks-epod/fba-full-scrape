@@ -43,10 +43,10 @@ def check_job_card_urls():
 def check_job_card_scrape():
 	msg = 'Checking the progress of the job card scrape against the list of job card urls...\r\n'
 
-    if os.path.isfile(output_dir+'/jobcard.csv'):
-        jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8')
-    else:
-        jobcards = pd.DataFrame({'job_card_number':[]})
+	if os.path.isfile(output_dir+'/jobcard.csv'):
+		jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8')
+	else:
+		jobcards = pd.DataFrame({'job_card_number':[]})
 	
 	if os.path.isfile(output_dir+'/job_card_urls.csv') and os.path.getsize(output_dir+'/job_card_urls.csv') > 0:
 		job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
