@@ -87,10 +87,9 @@ def check_muster_scrape():
 	else:
 		encountered_muster_links = pd.DataFrame({'job_card':[], 'url':[], 'msr_no':[], 'muster_url':[], 'work_code':[]})
 
-
 	mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code','right']].drop_duplicates(),how='left',on=['msr_no','work_code'])
-	
-	mr_notscraped_df = mr_df[pd.isnull(mr_df.right)].drop_duplicates(subset=['msr_no']) # keep the musters that haven't been scraped yet, drop duplicate musters
+
+	mr_notscraped_df = mr_df[pd.isnull(mr_df.right)].drop_duplicates(subset=['msr_no','work_code']) # keep the musters that haven't been scraped yet, drop duplicate musters
 
 	if len(mr_notscraped_df.index)==0:
 		mr_total = len(mr_df.index)
@@ -129,6 +128,5 @@ if __name__ == '__main__':
 	msg_string += check_job_card_scrape()
 	msg_string += check_muster_scrape()
 
-	print msg_string
-	# send_email(email_recipients,msg_string)
+	send_email(email_recipients,msg_string)
 
