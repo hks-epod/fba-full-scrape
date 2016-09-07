@@ -1,15 +1,25 @@
 import pandas as pd
 from email.mime.text import MIMEText
 import smtplib
+import sys
 
 input_dir = './input'
 output_dir = './full_output'
 
+gp_file = input_dir + '/test gp list.csv'
+
 def check_job_card_urls():
 	msg = 'Checking the list of job card urls...\r\n'
 
-	job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
-	gp_list = pd.read_csv(input_dir+'/test gp list.csv',header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'],dtype={'panchayat_code':object})
+	if os.path.isfile(output_dir+'/job_card_urls.csv') and os.path.getsize(output_dir+'/job_card_urls.csv') > 0:
+		job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
+	else:
+		job_card_urls = pd.DataFrame({'job_card':[],'url':[]})
+	
+	if os.path.isfile(gp_file) and os.path.getsize(gp_file) > 0:
+		gp_list = pd.read_csv(gp_file,header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'],dtype={'panchayat_code':object})
+	else:
+		sys.exit('GP input file not found or empty')
 
 	job_card_urls['panchayat_code'] = job_card_urls.url.apply(lambda x: x.split('Panchayat_Code=')[1].split('&')[0])
 	job_card_urls = job_card_urls[['panchayat_code','job_card']].drop_duplicates().groupby(['panchayat_code']).count().reset_index()
@@ -33,8 +43,16 @@ def check_job_card_urls():
 def check_job_card_scrape():
 	msg = 'Checking the progress of the job card scrape against the list of job card urls...\r\n'
 
-	jobcards = pd.read_csv(output_dir+'/jobcard.csv')
-	job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
+    if os.path.isfile(output_dir+'/jobcard.csv'):
+        jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8')
+    else:
+        jobcards = pd.DataFrame({'job_card_number':[]})
+	
+	if os.path.isfile(output_dir+'/job_card_urls.csv') and os.path.getsize(output_dir+'/job_card_urls.csv') > 0:
+		job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url'])
+	else:
+		job_card_urls = pd.DataFrame({'job_card':[],'url':[]})
+	
 	jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
 
 	jc_notscraped_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']]
@@ -55,11 +73,18 @@ def check_muster_scrape():
 	msg = 'Checking the progress of the muster roll scrape against the list of encountered muster urls...\r\n'
 	msg += 'Note: list of encountered muster roll urls is populated from the job card pages and will grow until all job cards are scraped\r\n'
 
-	musters = pd.read_csv(output_dir+'/muster.csv')
+	if os.path.isfile(output_dir+'/muster.csv') and os.path.getsize(output_dir+'/muster.csv') > 0:
+		musters = pd.read_csv(output_dir+'/muster.csv')
+	else:
+		musters = pd.DataFrame({'work_code':[],'msr_no':[]})
+	
 	musters['right'] = 1
 
 	# Find all the musters that haven't been scraped
-	encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],encoding='utf-8')
+    if os.path.isfile(output_dir+'/encountered_muster_links.csv'):
+        encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'])
+    else:
+        encountered_muster_links = pd.DataFrame({'job_card':[], 'url':[], 'msr_no':[], 'muster_url':[], 'work_code':[]})
 
 
 	mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code','right']].drop_duplicates(),how='left',on=['msr_no','work_code'])
@@ -104,5 +129,5 @@ if __name__ == '__main__':
 	msg_string += check_muster_scrape()
 
 	print msg_string
-	send_email(email_recipients,msg_string)
+	# send_email(email_recipients,msg_string)
 
