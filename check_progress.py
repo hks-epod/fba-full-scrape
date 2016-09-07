@@ -104,5 +104,5 @@ if __name__ == '__main__':
 	msg_string += check_muster_scrape()
 
 	print msg_string
-	# send_email(email_recipients,msg_string)
+	send_email(email_recipients,msg_string)
 
