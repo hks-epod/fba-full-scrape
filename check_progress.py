@@ -59,7 +59,7 @@ def check_muster_scrape():
 	musters['right'] = 1
 
 	# Find all the musters that haven't been scraped
-	encountered_muster_links = pd.read_csv(output_dir+'/encountered_unique.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],encoding='utf-8')
+	encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],encoding='utf-8')
 
 
 	mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code','right']].drop_duplicates(),how='left',on=['msr_no','work_code'])
