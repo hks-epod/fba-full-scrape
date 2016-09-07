@@ -65,7 +65,7 @@ class MySpider(CrawlSpider):
         # logging.info("Made it to the muster page for "+url) 
         if soup.find_all('table')[2].find('b').text!='The Values specified are wrong, Please enter Proper values' and soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"})!=None:
             par = urlparse.parse_qs(urlparse.urlparse(url).query)
-            panchayat = par['panchayat_code='[0]
+            panchayat = par['panchayat_code'][0]
             mrTopData = [
                 unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),
                 unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldatefrom"}).text.encode('utf-8').strip().decode('utf-8')),
