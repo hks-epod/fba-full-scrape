@@ -31,7 +31,7 @@ class MySpider(CrawlSpider):
 
     def get_unscraped_musters():
 
-        if os.path.isfile(output_dir+'/muster.csv'):
+        if os.path.isfile(output_dir+'/muster.csv') and os.path.getsize(output_dir+'/muster.csv') > 0:
             musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8')
         else:
             musters = pd.DataFrame({'work_code':[],'msr_no':[]})
