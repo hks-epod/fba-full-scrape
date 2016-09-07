@@ -2,6 +2,7 @@ import pandas as pd
 from email.mime.text import MIMEText
 import smtplib
 import sys
+import os
 
 input_dir = './input'
 output_dir = './full_output'
