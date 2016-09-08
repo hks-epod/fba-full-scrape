@@ -99,6 +99,7 @@ class MySpider(CrawlSpider):
     
     if not os.path.isfile(output_dir+'/job_card_urls.csv'): # this is the first time through the scrape, need to populate the inital list of job card urls
         start_urls = populate_job_card_urls()
+        mr_tracker = pd.DataFrame({'work_code':[],'msr_no':[]},dtype=object)
 
     else: # need to see how far along in the scrape we are
  
