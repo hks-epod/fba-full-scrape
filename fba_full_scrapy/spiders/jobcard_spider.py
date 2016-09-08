@@ -27,11 +27,12 @@ if not os.path.exists(output_dir):
 
 class MySpider(CrawlSpider):
     name = "all_job_cards"
-    start_urls = []
     
     def populate_job_card_urls():
         br = mechanize.Browser()
         br.set_handle_robots(False)
+
+        start_urls = []
         with open(input_dir + '/'+ gp_file, 'rU') as f:
             reader = csv.reader(f)
             #For each panchayat in csv, go to job card link
@@ -63,6 +64,10 @@ class MySpider(CrawlSpider):
                         writer = csv.writer(f)
                         writer.writerow([job_card,url])
 
+        return start_urls
+
+
+
     def get_mr_tracker():
         if os.path.isfile(output_dir+'/muster.csv') and os.path.getsize(output_dir+'/muster.csv') > 0:
             musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8',dtype={'work_code':object,'msr_no':object})
@@ -93,7 +98,7 @@ class MySpider(CrawlSpider):
     # start/restart business goes here
     
     if not os.path.isfile(output_dir+'/job_card_urls.csv'): # this is the first time through the scrape, need to populate the inital list of job card urls
-        populate_job_card_urls()
+        start_urls = populate_job_card_urls()
 
     else: # need to see how far along in the scrape we are
  
@@ -104,6 +109,7 @@ class MySpider(CrawlSpider):
         jc_df = get_unscraped_jobcards()
 
         # add the unscraped job cards to the queue
+        start_urls = []
         jc_list = jc_df.to_dict(orient='records')
         for job_card in jc_list:
             start_urls.append(job_card['url'])
