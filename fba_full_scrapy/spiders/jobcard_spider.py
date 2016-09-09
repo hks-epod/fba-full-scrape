@@ -69,10 +69,12 @@ class MySpider(CrawlSpider):
 
 
     def get_mr_tracker():
-        if os.path.isfile(output_dir+'/muster.csv') and os.path.getsize(output_dir+'/muster.csv') > 0:
-            musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8',dtype={'work_code':object,'msr_no':object})
+
+        if os.path.isfile(output_dir+'/encountered_muster_links.csv') and os.path.getsize(output_dir+'/encountered_muster_links.csv') > 0:
+            musters = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],encoding='utf-8',dtype={'work_code':object,'msr_no':object})
         else:
-            musters = pd.DataFrame({'work_code':[],'msr_no':[]},dtype=object)
+            musters = pd.DataFrame({'msr_no':[], 'work_code':[]},dtype=object)
+        
         
         mr_tracker = musters[['work_code','msr_no']] # this is where we'll check for duplicate musters
 
