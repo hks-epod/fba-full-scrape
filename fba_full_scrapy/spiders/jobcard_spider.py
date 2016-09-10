@@ -71,25 +71,25 @@ class MySpider(CrawlSpider):
     def get_mr_tracker():
 
         if os.path.isfile(output_dir+'/encountered_muster_links.csv') and os.path.getsize(output_dir+'/encountered_muster_links.csv') > 0:
-            musters = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],encoding='utf-8',dtype={'work_code':object,'msr_no':object})
+            mr_tracker = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],usecols=['msr_no','work_code'],encoding='utf-8',dtype={'work_code':object,'msr_no':object})
         else:
-            musters = pd.DataFrame({'msr_no':[], 'work_code':[]},dtype=object)
+            mr_tracker = pd.DataFrame({'msr_no':[], 'work_code':[]},dtype=object)
         
-        
-        mr_tracker = musters[['work_code','msr_no']] # this is where we'll check for duplicate musters
+        # this is where we'll check for duplicate musters
 
         return mr_tracker
 
     def get_unscraped_jobcards():
 
-        if os.path.isfile(output_dir+'/jobcard.csv'):
-            jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8')
+        if os.path.isfile(output_dir+'/jobcard.csv') and os.path.getsize(output_dir+'/jobcard.csv') > 0:
+            jobcards = pd.read_csv(output_dir+'/jobcard.csv',encoding='utf-8',usecols=['job_card_number'],dtype={'job_card_number':object})
+            jobcards = jobcards[jobcards['job_card_number']!='job_card_number'] # Headers get appended every time the scraper runs
         else:
-            jobcards = pd.DataFrame({'job_card_number':[]})
-
+            jobcards = pd.DataFrame({'job_card_number':[]},dtype=object)
+    
         job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url']) # get the master list of job card urls to scrape
 
-        jc_df = pd.merge(job_card_urls,jobcards[['job_card_number']].drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
+        jc_df = pd.merge(job_card_urls,jobcards.drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
         
         jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']] # keep the job cards that haven't been scraped yet, drop duplicate job cards
 

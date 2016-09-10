@@ -32,19 +32,20 @@ class MySpider(CrawlSpider):
     def get_unscraped_musters():
 
         if os.path.isfile(output_dir+'/muster.csv') and os.path.getsize(output_dir+'/muster.csv') > 0:
-            musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8')
+            musters = pd.read_csv(output_dir+'/muster.csv',encoding='utf-8',usecols=['work_code','msr_no'],dtype={'work_code':object,'msr_no':object})
+            musters = musters[musters.work_code!='work_code'] # when the script restarts it puts in an extra header row
         else:
-            musters = pd.DataFrame({'work_code':[],'msr_no':[]})
+            musters = pd.DataFrame({'work_code':[],'msr_no':[]},dtype=object)
         
         if os.path.isfile(output_dir+'/encountered_muster_links.csv'):
-            encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'])
+            encountered_muster_links = pd.read_csv('encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],usecols=['msr_no','work_code','muster_url'],encoding='utf-8',dtype={'work_code':object,'msr_no':object,'muster_url':object})
         else:
-            encountered_muster_links = pd.DataFrame({'job_card':[], 'url':[], 'msr_no':[], 'muster_url':[], 'work_code':[]})
+            encountered_muster_links = pd.DataFrame({'msr_no':[], 'muster_url':[], 'work_code':[]},dtype=object)
 
         musters['right'] = 1
         
-        mr_df = pd.merge(encountered_muster_links,musters[['msr_no','work_code','right']].drop_duplicates(),how='left',on=['msr_no','work_code'])
-        mr_df = mr_df[pd.isnull(mr_df.right)].drop_duplicates(subset=['msr_no','work_code']) # keep the musters that haven't been scraped yet, drop duplicate musters
+        mr_df = pd.merge(encountered_muster_links,musters.drop_duplicates(),how='left',on=['msr_no','work_code'])
+        mr_df = mr_df[pd.isnull(mr_df.right)] # keep the musters that haven't been scraped yet
         
         return mr_df
 
