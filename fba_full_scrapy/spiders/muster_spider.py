@@ -38,7 +38,7 @@ class MySpider(CrawlSpider):
             musters = pd.DataFrame({'work_code':[],'msr_no':[]},dtype=object)
         
         if os.path.isfile(output_dir+'/encountered_muster_links.csv'):
-            encountered_muster_links = pd.read_csv('encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],usecols=['msr_no','work_code','muster_url'],encoding='utf-8',dtype={'work_code':object,'msr_no':object,'muster_url':object})
+            encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],usecols=['msr_no','work_code','muster_url'],encoding='utf-8',dtype={'work_code':object,'msr_no':object,'muster_url':object})
         else:
             encountered_muster_links = pd.DataFrame({'msr_no':[], 'muster_url':[], 'work_code':[]},dtype=object)
 
