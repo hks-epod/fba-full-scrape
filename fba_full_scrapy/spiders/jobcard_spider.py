@@ -99,7 +99,7 @@ class MySpider(CrawlSpider):
 
     # start/restart business goes here
     
-    if not os.path.isfile(output_dir+'/job_card_urls.csv'): # this is the first time through the scrape, need to populate the inital list of job card urls
+    if not os.path.isfile(output_dir+'/job_card_urls_48.csv'): # this is the first time through the scrape, need to populate the inital list of job card urls
         start_urls = populate_job_card_urls()
         mr_tracker = pd.DataFrame({'work_code':[],'msr_no':[]},dtype=object)
 
@@ -165,6 +165,29 @@ class MySpider(CrawlSpider):
                 item['bank_po_name'] = item_data[18]
                 item['aadhar_no'] = item_data[19]
                 yield item
+
+        if person_table.find_all('tr')==None:
+            
+            # Add just the job card level data
+            item_data = top_data
+            item_data = [item.strip() for item in item_data]
+            item = JobcardItem()
+            item['panchayat_code'] = item_data[0]
+            item['job_card_number'] = item_data[1]
+            item['head_of_hh_name'] = item_data[2]
+            item['father_husband_name'] = item_data[3]
+            item['sc_st_category'] = item_data[4]
+            item['reg_date'] = item_data[5]
+            item['address'] = item_data[6]
+            item['village_name'] = item_data[7]
+            item['panchayat_name'] = item_data[8]
+            item['block_name'] = item_data[9]
+            item['district_name'] = item_data[10]
+            item['bpl_status'] = item_data[11]
+            item['family_id'] = item_data[12]
+            yield item
+
+
 
         muster_links = [link for link in response.xpath("//@href").extract() if 'musternew.aspx' in link]
         # Get links to all muster rolls that individual has been listed on.
