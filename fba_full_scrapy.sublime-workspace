@@ -520,18 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "fba_full_scrapy/spiders/jobcard_spider.py",
+			"file": "fba_full_scrapy/settings.py",
 			"settings":
 			{
-				"buffer_size": 9768,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "fba_full_scrapy/spiders/muster_spider.py",
-			"settings":
-			{
-				"buffer_size": 10844,
+				"buffer_size": 1032,
 				"line_ending": "Unix"
 			}
 		}
@@ -590,16 +582,16 @@
 	],
 	"file_history":
 	[
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/muster_spider.py",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/jobcard_spider.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/muster_spider.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/all_job_cards.sh",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/all_musters.sh",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/muster.csv",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy.sh",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/jobcard.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links_old.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/input/test gp list.csv",
@@ -1013,62 +1005,30 @@
 			[
 				{
 					"buffer": 0,
-					"file": "fba_full_scrapy/spiders/jobcard_spider.py",
+					"file": "fba_full_scrapy/settings.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9768,
+						"buffer_size": 1032,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3319,
-								3319
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 743.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "fba_full_scrapy/spiders/muster_spider.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10844,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								558,
-								558
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 82.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
 					"type": "text"
 				}
 			]

@@ -87,7 +87,7 @@ class MySpider(CrawlSpider):
         else:
             jobcards = pd.DataFrame({'job_card_number':[]},dtype=object)
     
-        job_card_urls = pd.read_csv(output_dir+'/job_card_urls.csv',header=None,names=['job_card','url']) # get the master list of job card urls to scrape
+        job_card_urls = pd.read_csv(output_dir+'/job_card_urls_48.csv',header=None,names=['job_card','url']) # get the master list of job card urls to scrape
 
         jc_df = pd.merge(job_card_urls,jobcards.drop_duplicates(),how='left',left_on='job_card',right_on='job_card_number')
         
