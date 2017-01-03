@@ -519,14 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "fba_full_scrapy/settings.py",
-			"settings":
-			{
-				"buffer_size": 1032,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -574,24 +566,33 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/input"
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output"
 	],
 	"file_history":
 	[
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/jobcard_spider.py",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
+		"/Users/edodge/Desktop/Projects/Cases/mgnrega-case/mgnrega.html",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/jobcard_spider.py",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls_48.csv",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/missing_muster_info.csv",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/missing_jc_info.csv",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links.csv",
+		"/Users/edodge/Downloads/mgnrega.html",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/muster.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/muster_spider.py",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
-		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/jobcard_spider.py",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/all_job_cards.sh",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/all_musters.sh",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/muster.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy.sh",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/jobcard.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links_old.csv",
 		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/input/test gp list.csv",
@@ -699,17 +700,7 @@
 		"/Users/Eric/Desktop/Projects/Visualization/paydata/shared/error_recipients.json",
 		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/mp/insert_users.py",
 		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/jharkhand/insert_users.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/req_test.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/mp/output/mp_pilot_users_with_passwords.csv",
-		"/Users/Eric/Desktop/Data/NREGA/paydash-analysis/output/nrega_outcomes_blocks.csv",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/chhattisgarh/input/users.csv",
-		"/Users/Eric/Desktop/Data/NREGA/paydash-analysis/district-summary/get_block_stats.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/etl_outcomes.sh",
-		"/Users/Eric/Downloads/mp_cg_blocks.csv",
-		"/Users/Eric/Desktop/Data/NREGA/paydash-analysis/output/outcome_analysis.csv",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydroid/get_analytics.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydash/get_analytics.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydash/analytics_functions/process_data.py"
+		"/Users/Eric/Desktop/Projects/Visualization/paydata/req_test.py"
 	],
 	"find":
 	{
@@ -727,6 +718,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"1701002019/AV/4842",
 			"dtypes",
 			"encountered",
 			"\\",
@@ -853,8 +845,7 @@
 			"8ad909b475",
 			"ae5c390428",
 			"$",
-			"^",
-			"d3"
+			"^"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1000,37 +991,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "fba_full_scrapy/settings.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1032,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1099,6 +1061,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"",
+				"~/Desktop/Projects/NREGA/PayDash/paydata/paydata.sublime-project"
+			]
 		],
 		"width": 380.0
 	},
@@ -1119,7 +1085,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 165.0,
+	"side_bar_width": 246.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
