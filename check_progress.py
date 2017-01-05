@@ -13,7 +13,7 @@ def check_job_card_urls():
 		job_card_urls = pd.DataFrame({'job_card':[],'url':[]})
 	
 	if os.path.isfile(gp_file) and os.path.getsize(gp_file) > 0:
-		gp_list = pd.read_csv(gp_file,header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code','treatment_status'],dtype={'panchayat_code':object})
+		gp_list = pd.read_csv(gp_file,header=None,names=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code'],usecols=['district_name','district_code','block_name','block_code','panchayat_name','panchayat_code'],dtype={'panchayat_code':object})
 	else:
 		sys.exit('GP input file not found or empty')
 
