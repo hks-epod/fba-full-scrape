@@ -50,7 +50,7 @@ class MySpider(CrawlSpider):
                         i+=1
                         if i>0:
                             color = tr.find_all('td')[2].find('font')['color']
-                            if color in colors['active']:
+                            if color in colors['inactive']:
                                 active_job_cards.append(tr.find_all('td')[1].text)
                 except:
                     sys.exit("Couldn't parse the job card directory table for url {}".format(url))
