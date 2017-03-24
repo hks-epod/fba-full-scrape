@@ -39,8 +39,12 @@ class MySpider(CrawlSpider):
             for row_in in reader:
                 panchayat = row_in[5]
                 url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
-                br.open(url)
-                br.follow_link(text_regex='Job card/Employment Register')
+                try:
+                    br.open(url)
+                    br.follow_link(text_regex='Job card/Employment Register')
+                except:
+                    print "Couldn't open directory for panchayat",panchayat
+                    continue
                 soup = BeautifulSoup(br.response().read(), 'lxml')
                 active_job_cards = []
                 i=-1
@@ -94,6 +98,8 @@ class MySpider(CrawlSpider):
         jc_df = jc_df[pd.isnull(jc_df.job_card_number)][['job_card','url']] # keep the job cards that haven't been scraped yet, drop duplicate job cards
 
         return jc_df
+
+
 
     #######################
 
