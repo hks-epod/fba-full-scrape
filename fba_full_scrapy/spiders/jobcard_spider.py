@@ -18,7 +18,7 @@ import logging
 
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
 input_dir = './input'
-gp_file = 'gp list.csv'
+gp_file = 'gp list temp.csv'
 #date = datetime.date.today().strftime("%d%b%Y")
 output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
