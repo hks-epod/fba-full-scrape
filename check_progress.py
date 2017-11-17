@@ -120,8 +120,6 @@ if __name__ == '__main__':
 	
 	email_recipients = [
 		'edodge11@gmail.com',
-		'sschaner@gmail.com',
-		'Patrick_Agte@hks.harvard.edu'
 	]
 
 	msg_string = ''
