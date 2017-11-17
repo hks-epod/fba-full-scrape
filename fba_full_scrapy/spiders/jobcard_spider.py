@@ -169,7 +169,7 @@ class MySpider(CrawlSpider):
                 j += 1
                 if j>1 and j<len(person_table)-1:
                     # Add job card level and individual level data
-                    bottom_data = [unidecode(tr.find_all('td')[1].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[2].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[3].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[4].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[5].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[6].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[7].text.encode('utf-8').decode('utf-8'))]
+                    bottom_data = [unidecode(tr.find_all('td')[1].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[2].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[3].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[4].text.encode('utf-8').decode('utf-8')),unidecode(tr.find_all('td')[5].text.encode('utf-8').decode('utf-8'))]
                     item_data = top_data+bottom_data
                     item_data = [item.strip() for item in item_data]
                     item = JobcardItem()
@@ -190,9 +190,7 @@ class MySpider(CrawlSpider):
                     item['applicant_name'] = item_data[14]
                     item['applicant_gender'] = item_data[15]
                     item['applicant_age'] = item_data[16]
-                    item['account_no'] = item_data[17]
-                    item['bank_po_name'] = item_data[18]
-                    item['aadhar_no'] = item_data[19]
+                    item['bank_po_name'] = item_data[17]
                     yield item
 
 

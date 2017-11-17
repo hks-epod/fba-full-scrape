@@ -25,9 +25,7 @@ class JobcardItem(scrapy.Item):
     applicant_name = scrapy.Field()
     applicant_gender = scrapy.Field()
     applicant_age = scrapy.Field()
-    account_no = scrapy.Field()
     bank_po_name = scrapy.Field()
-    aadhar_no = scrapy.Field()
     pass
 
 class MusterItem(scrapy.Item):
