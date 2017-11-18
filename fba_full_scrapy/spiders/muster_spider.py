@@ -81,35 +81,33 @@ class MySpider(CrawlSpider):
 
             # If link doesnt work (ie table doesn't show up), put empty rows/cols
             if soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'})==None:
-                item_data = [panchayat,'','','','','','','','','','','','','','','','','','','','']+mrTopData
+                item_data = [panchayat,'','','','','','','','','','','','','','','','','','']+mrTopData
                 item = MusterItem()
                 item['panchayat_code'] = item_data[0]
                 item['job_card_number'] = item_data[1]
                 item['worker_name'] = item_data[2]
-                item['aadhar_no'] = item_data[3]
-                item['sc_st_category'] = item_data[4]
-                item['village_name'] = item_data[5]
-                item['present'] = item_data[6]
-                item['days_worked'] = item_data[7]
-                item['average_daily_wage'] = item_data[8]
-                item['dues'] = item_data[9]
-                item['travel_food_expenses'] = item_data[10]
-                item['tool_payments'] = item_data[11]
-                item['total_cash_payments'] = item_data[12]
-                item['account_no'] = item_data[13]
-                item['bank_po_name'] = item_data[14]
-                item['po_code_branch_name'] = item_data[15]
-                item['po_address_branch_code'] = item_data[16]
-                item['wagelist_no'] = item_data[17]
-                item['status'] = item_data[18]
-                item['signature'] = item_data[19]
-                item['ac_credited_date'] = item_data[20]
-                item['msr_no'] = item_data[21]
-                item['work_start_date'] = item_data[22]
-                item['work_end_date'] = item_data[23]
-                item['work_approval_date'] = item_data[24]
-                item['work_code'] = item_data[25]
-                item['work_name'] = item_data[26]
+                item['sc_st_category'] = item_data[3]
+                item['village_name'] = item_data[4]
+                item['present'] = item_data[5]
+                item['days_worked'] = item_data[6]
+                item['average_daily_wage'] = item_data[7]
+                item['dues'] = item_data[8]
+                item['travel_food_expenses'] = item_data[9]
+                item['tool_payments'] = item_data[10]
+                item['total_cash_payments'] = item_data[11]
+                item['bank_po_name'] = item_data[12]
+                item['po_code_branch_name'] = item_data[13]
+                item['po_address_branch_code'] = item_data[14]
+                item['wagelist_no'] = item_data[15]
+                item['status'] = item_data[16]
+                item['signature'] = item_data[17]
+                item['ac_credited_date'] = item_data[18]
+                item['msr_no'] = item_data[19]
+                item['work_start_date'] = item_data[20]
+                item['work_end_date'] = item_data[21]
+                item['work_approval_date'] = item_data[22]
+                item['work_code'] = item_data[23]
+                item['work_name'] = item_data[24]
                 yield item
             else:
 
@@ -125,7 +123,6 @@ class MySpider(CrawlSpider):
                 muster_headers = [
                     u'',
                     u'नाम/पंजीकरण संख्या',
-                    u'Aadhaar No',
                     u'जाति',
                     u'गांव'] + days + [
                     u'कुल हाजिरी',
@@ -134,7 +131,6 @@ class MySpider(CrawlSpider):
                     u'यात्रा और खान पान का व्यय',
                     u'\u0914\u095b\u093e\u0930 \u0938\u092e\u094d\u092c\u0902\u0927\u093f\u0924 \u092d\u0941\u0917\u0924\u093e\u0928',
                     u'कुल नकद भुगतान',
-                    u'खाता क्रमांक',
                     u'Postoffice/Bank Name',
                     u'Postoffice Code/Branch name',
                     u'Postoffice address/Branch code',
@@ -159,19 +155,19 @@ class MySpider(CrawlSpider):
 
                 for tr in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[1:-1]:
                     
-                    # Get Aadhar number, SC/ST status, Village name
+                    # Get SC/ST status, Village name
                     temp_list = [
-                        unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[2:5]
+                        unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[2:4]
                     ]
 
                     # Get the columns showing which days they were present and consolidate it into a single field            
                     temp_list += [
-                        ';'.join([str(p+1) if val.text.strip()=='P' else '' for p,val in enumerate(tr.find_all('td')[5:5+len(days)])])
+                        ';'.join([str(p+1) if val.text.strip()=='P' else '' for p,val in enumerate(tr.find_all('td')[4:4+len(days)])])
                     ]
 
                     # Get the rest of the columns in the row            
                     temp_list += [
-                        unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[5+len(days):]
+                        unidecode(val.text.encode('utf-8').strip().decode('utf-8')) for val in tr.find_all('td')[4+len(days):]
                     ]
 
                     # Add the panchayat code, worker name, job card
@@ -185,30 +181,28 @@ class MySpider(CrawlSpider):
                     item['panchayat_code'] = item_data[0]
                     item['job_card_number'] = item_data[1]
                     item['worker_name'] = item_data[2]
-                    item['aadhar_no'] = item_data[3]
-                    item['sc_st_category'] = item_data[4]
-                    item['village_name'] = item_data[5]
-                    item['present'] = item_data[6]
-                    item['days_worked'] = item_data[7]
-                    item['average_daily_wage'] = item_data[8]
-                    item['dues'] = item_data[9]
-                    item['travel_food_expenses'] = item_data[10]
-                    item['tool_payments'] = item_data[11]
-                    item['total_cash_payments'] = item_data[12]
-                    item['account_no'] = item_data[13]
-                    item['bank_po_name'] = item_data[14]
-                    item['po_code_branch_name'] = item_data[15]
-                    item['po_address_branch_code'] = item_data[16]
-                    item['wagelist_no'] = item_data[17]
-                    item['status'] = item_data[18]
-                    item['ac_credited_date'] = item_data[19]
-                    item['signature'] = item_data[20]
-                    item['msr_no'] = item_data[21]
-                    item['work_start_date'] = item_data[22]
-                    item['work_end_date'] = item_data[23]
-                    item['work_approval_date'] = item_data[24]
-                    item['work_code'] = item_data[25]
-                    item['work_name'] = item_data[26]
+                    item['sc_st_category'] = item_data[3]
+                    item['village_name'] = item_data[4]
+                    item['present'] = item_data[5]
+                    item['days_worked'] = item_data[6]
+                    item['average_daily_wage'] = item_data[7]
+                    item['dues'] = item_data[8]
+                    item['travel_food_expenses'] = item_data[9]
+                    item['tool_payments'] = item_data[10]
+                    item['total_cash_payments'] = item_data[11]
+                    item['bank_po_name'] = item_data[12]
+                    item['po_code_branch_name'] = item_data[13]
+                    item['po_address_branch_code'] = item_data[14]
+                    item['wagelist_no'] = item_data[15]
+                    item['status'] = item_data[16]
+                    item['signature'] = item_data[17]
+                    item['ac_credited_date'] = item_data[18]
+                    item['msr_no'] = item_data[19]
+                    item['work_start_date'] = item_data[20]
+                    item['work_end_date'] = item_data[21]
+                    item['work_approval_date'] = item_data[22]
+                    item['work_code'] = item_data[23]
+                    item['work_name'] = item_data[24]
 
                     yield item
 
