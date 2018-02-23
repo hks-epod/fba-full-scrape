@@ -18,7 +18,7 @@ import logging
 
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
 input_dir = './input'
-gp_file = 'gp list.csv'
+gp_file = 'gp list debgarh.csv'
 #date = datetime.date.today().strftime("%d%b%Y")
 output_dir = './full_output' #+date
 if not os.path.exists(output_dir):
@@ -206,7 +206,8 @@ class MySpider(CrawlSpider):
             year = int(dt_from[6:])
             dt = datetime.date(year,month,day)
 
-            if not ((self.mr_tracker.msr_no==msr_no) & (self.mr_tracker.work_code==work_code)).any() and dt>=datetime.date(2015,9,1):
+            # if not ((self.mr_tracker.msr_no==msr_no) & (self.mr_tracker.work_code==work_code)).any() and dt>=datetime.date(2015,9,1):
+            if not ((self.mr_tracker.msr_no==msr_no) & (self.mr_tracker.work_code==work_code)).any():
 
                 self.mr_tracker = self.mr_tracker.append({'work_code':work_code,'msr_no':msr_no},ignore_index=True)
                 muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
