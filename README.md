@@ -28,14 +28,26 @@ Note: When beginning a new scrape the full_output directory needs to be clear of
 
 From the nrega.nic.in homepage follow these steps to drill down to your selected gram panchayat and find its job card directory. The job card directory is where the scraping program begins its work.
 
+First, click the "States" button on the main page:
+
 ![alt text](img/1.png)
+
+All our gram panchayats are in Madhya Pradesh so we'll click that link on the states page:
 
 ![alt text](img/2.png)
 
+Next, choose your district from the left panel. The FBA study is spread across 4 districts of northern Mahdya Pradesh.
+
 ![alt text](img/3.png)
+
+Choose your block on the left panel:
 
 ![alt text](img/4.png)
 
+Choose your gram panchayat on the left panel:
+
 ![alt text](img/5.png)
+
+Select the job card directory from the gram panchayat page:
 
 ![alt text](img/6.png)
