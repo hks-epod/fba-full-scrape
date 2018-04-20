@@ -566,10 +566,36 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/Eric/Desktop/Data/NREGA/scraping/fba_full_scrapy"
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output"
 	],
 	"file_history":
 	[
+		"/Users/edodge/Desktop/Projects/Cases/mgnrega-case/mgnrega.html",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/jobcard_spider.py",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls_48.csv",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/missing_muster_info.csv",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/missing_jc_info.csv",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links.csv",
+		"/Users/edodge/Downloads/mgnrega.html",
+		"/Users/edodge/Desktop/Projects/NREGA/scraping/fba-full-scrape/full_output/muster.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/muster_spider.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/check_progress.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy/spiders/jobcard_spider.py",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/all_job_cards.sh",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/all_musters.sh",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/muster.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/log.txt",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/fba_full_scrapy.sh",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/job_card_urls.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/jobcard.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/full_output/encountered_muster_links_old.csv",
+		"/Users/ericdodge/Projects/NREGA/scraping/fba-full-scrape/input/test gp list.csv",
 		"/Users/Eric/Desktop/Data/NREGA/scraping/fba_full_scrapy/fba_full_scrapy.sublime-project",
 		"/Users/Eric/Desktop/Data/NREGA/scraping/fba_full_scrapy/fba_full_scrapy/spiders/fba_spider.py",
 		"/Users/Eric/Desktop/Data/pollutionbot/pollutionbot/spiders/cpcb.py",
@@ -674,34 +700,11 @@
 		"/Users/Eric/Desktop/Projects/Visualization/paydata/shared/error_recipients.json",
 		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/mp/insert_users.py",
 		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/jharkhand/insert_users.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/req_test.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/mp/output/mp_pilot_users_with_passwords.csv",
-		"/Users/Eric/Desktop/Data/NREGA/paydash-analysis/output/nrega_outcomes_blocks.csv",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/users/pilot/chhattisgarh/input/users.csv",
-		"/Users/Eric/Desktop/Data/NREGA/paydash-analysis/district-summary/get_block_stats.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/etl_outcomes.sh",
-		"/Users/Eric/Downloads/mp_cg_blocks.csv",
-		"/Users/Eric/Desktop/Data/NREGA/paydash-analysis/output/outcome_analysis.csv",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydroid/get_analytics.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydash/get_analytics.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydash/analytics_functions/process_data.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydash/analytics_functions/send_request.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydash/api_helpers/auth.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydroid/analytics_functions/send_report.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydroid/analytics_functions/send_request.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydroid/analytics_functions/process_data.py",
-		"/Users/Eric/Desktop/Projects/Visualization/timeuse/public/modules/login/service/login-service.js",
-		"/Users/Eric/Desktop/Projects/Visualization/timeuse-api/libs/db/mongoose.js",
-		"/Users/Eric/Desktop/Projects/edodge.github.io/index.html",
-		"/Users/Eric/Desktop/Projects/Visualization/delays/panchayats_to_db_by_block.py",
-		"/Users/Eric/Desktop/tor.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/notifications/gen_notif_tables.py",
-		"/Users/Eric/Desktop/Projects/Visualization/paydash/app/controllers/performance/discrete.js",
-		"/Users/Eric/Desktop/Projects/Visualization/paydata/analysis/google analytics/paydroid/api_helpers/auth.py"
+		"/Users/Eric/Desktop/Projects/Visualization/paydata/req_test.py"
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -715,6 +718,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"1701002019/AV/4842",
+			"dtypes",
+			"encountered",
 			"\\",
 			"\"+USER_ID+\"",
 			"USER_ID",
@@ -839,10 +845,7 @@
 			"8ad909b475",
 			"ae5c390428",
 			"$",
-			"^",
-			"d3",
-			"1709003",
-			"programme officer"
+			"^"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -999,7 +1002,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -1058,6 +1061,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"",
+				"~/Desktop/Projects/NREGA/PayDash/paydata/paydata.sublime-project"
+			]
 		],
 		"width": 380.0
 	},
@@ -1078,7 +1085,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 165.0,
+	"side_bar_width": 246.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
