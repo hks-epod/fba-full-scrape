@@ -29,3 +29,13 @@ Note: When beginning a new scrape the full_output directory needs to be clear of
 From the nrega.nic.in homepage follow these steps to drill down to your selected gram panchayat and find its job card directory. The job card directory is where the scraping program begins its work.
 
 ![alt text](img/1.png)
+
+![alt text](img/2.png)
+
+![alt text](img/3.png)
+
+![alt text](img/4.png)
+
+![alt text](img/5.png)
+
+![alt text](img/6.png)
