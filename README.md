@@ -12,7 +12,7 @@ The job card pages also include a table showing abbreviated information on work 
 
 In the second phase, the program begins accessing all the muster roll pages contained in encountered_muster_links.csv and scraping the full table of data on workers on the muster roll. This data is added to muster.csv.
 
-The scrape is often long running (days to weeks to run), and at times the job card pages are restricted to 12-hour windows where they can only be accessed between 6am and 6pm IST. While accessing the job card pages can be very slow, the muster roll pages typically return data relatively quickly. The strategy of running the program in two phases allows us to kill the job card scrape at the end of the 12 hour window, then start running the muster roll phase to quickly pick up all the muster roll data from the pages gathered in the encountered_muster_links.csv file. When we start the job card scrape back up at the beginning of the next 12 hour window, it looks at the job_card_urls.csv and jobcard.csv files to start the phase 1 scrape where it left off when it was killed. Using this pattern and triggering the shell scricts from cron we can keep the scrape going efficiently over long periods of time.
+The scrape is often long running (days to weeks to run), and at times the job card pages are restricted to 12-hour windows where they can only be accessed between 6am and 6pm IST. While accessing the job card pages can be very slow, the muster roll pages typically return data relatively quickly. The strategy of running the program in two phases allows us to kill the job card scrape at the end of the 12 hour window, then start running the muster roll phase to quickly pick up all the muster roll data from the pages gathered in the encountered_muster_links.csv file. When we start the job card scrape back up at the beginning of the next 12 hour window, it looks at the job_card_urls.csv and jobcard.csv files to start the phase 1 scrape where it left off when it was killed. Using this pattern and triggering the shell scripts from cron we can keep the scrape going efficiently over long periods of time.
 
 Note: the file job_card_urls.csv needs to be generated in full the first time phase 1 of the script is run in order for the re-starts to work correctly. It generally only takes a few minutes for the program to access all the job card directory pages and generate this file.
 
@@ -24,3 +24,8 @@ A Python script called check_progress.py is called at the end of each shell scri
 
 Note: When beginning a new scrape the full_output directory needs to be clear of any data files (putting things in the archive sub-directory is OK). The presence or absence of data files in this directory is how the script decides whether to start a new scrape or continue an existing scrape.
 
+## Manually navigating to the job card directory page
+
+From the nrega.nic.in homepage follow these steps to drill down to your selected gram panchayat and find its job card directory. The job card directory is where the scraping program begins its work.
+
+![alt text](img/1.png)
