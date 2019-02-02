@@ -21,7 +21,7 @@ from twisted.internet.error import TimeoutError, DNSLookupError, \
 
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.response import response_status_message
-from scrapy.xlib.tx import ResponseFailed
+from twisted.web.client import ResponseFailed
 import datetime
 import logging
 import os

@@ -38,7 +38,7 @@ class MySpider(CrawlSpider):
             #For each panchayat in csv, go to job card link
             for row_in in reader:
                 panchayat = row_in[5]
-                url = 'http://164.100.129.4/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
+                url = 'http://mnregaweb2.nic.in/netnrega/IndexFrame.aspx?lflag=eng&District_Code='+row_in[1]+'&district_name='+row_in[0]+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+row_in[2]+'&block_code='+row_in[3]+'&fin_year=2015-2016&check=1&Panchayat_name='+'+'.join(row_in[4].split(' '))+'&Panchayat_Code='+row_in[5]
                 try:
                     br.open(url)
                     br.follow_link(text_regex='Job card/Employment Register')
@@ -62,7 +62,7 @@ class MySpider(CrawlSpider):
                 #Add active job card links to start url
                 for item in active_job_cards:
                     job_card = item
-                    url = 'http://164.100.129.4/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2016-2017'
+                    url = 'http://mnregaweb2.nic.in/netnrega/state_html/jcr.aspx?reg_no='+job_card+'&Panchayat_Code='+panchayat+'&fin_year=2016-2017'
                     start_urls.append(url)
                     with open(output_dir+'/job_card_urls.csv', 'a') as f:
                         writer = csv.writer(f)
@@ -210,7 +210,7 @@ class MySpider(CrawlSpider):
             if not ((self.mr_tracker.msr_no==msr_no) & (self.mr_tracker.work_code==work_code)).any():
 
                 self.mr_tracker = self.mr_tracker.append({'work_code':work_code,'msr_no':msr_no},ignore_index=True)
-                muster_url = ('http://164.100.129.6/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
+                muster_url = ('http://mnregaweb2.nic.in/netnrega'+link[2:]).replace(';','').replace('%3b','').replace('-','%96').replace('%20','+').replace('!','')
                 with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
                     writer = csv.writer(f)
                     writer.writerow([job_card.encode('utf-8'), url.encode('utf-8'), msr_no.encode('utf-8'), muster_url.encode('utf-8'), work_code.encode('utf-8')])
