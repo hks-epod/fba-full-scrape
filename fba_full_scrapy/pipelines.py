@@ -6,11 +6,12 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import os
 from scrapy import signals
-from scrapy.xlib.pydispatch import dispatcher
+from pydispatch import dispatcher
+# from itemadapter import ItemAdapter
 from scrapy.exporters import CsvItemExporter
-import datetime
+# import datetime
 from scrapy.mail import MailSender
-import sys
+# import sys
 
 #date = datetime.date.today().strftime("%d%b%Y")
 output_dir = './full_output' #+date
@@ -28,8 +29,8 @@ class MultiCSVItemPipeline(object):
         dispatcher.connect(self.spider_closed, signal=signals.spider_closed)
 
     def spider_opened(self, spider):
-        self.files = dict([ (name, open(output_dir+'/'+name+'.csv','a')) for name in self.SaveTypes])
-        self.exporters = dict([ (name,CsvItemExporter(self.files[name])) for name in self.SaveTypes])
+        self.files = dict([(name, open(output_dir+'/'+name+'.csv', 'wb')) for name in self.SaveTypes])
+        self.exporters = dict([(name, CsvItemExporter(self.files[name])) for name in self.SaveTypes])
         [e.start_exporting() for e in self.exporters.values()]
 
     def spider_closed(self, spider):

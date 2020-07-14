@@ -7,9 +7,7 @@
 #
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
-import datetime
 import os
-import sys
 
 #date = datetime.date.today().strftime("%d%b%Y")
 output_dir = './full_output' #+date

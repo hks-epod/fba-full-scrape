@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import scrapy
 from fba_full_scrapy.items import JobcardItem
 from fba_full_scrapy.items import MusterItem
@@ -9,12 +8,11 @@ from scrapy.linkextractors import LinkExtractor
 from bs4 import BeautifulSoup
 import csv
 import os
-import datetime
+# import datetime
 from unidecode import unidecode
-import mechanize
-from scrapy import signals
-import sys
-import urlparse
+# from scrapy import signals
+# import sys
+import urllib.parse
 import pandas as pd
 import logging
 
@@ -38,7 +36,12 @@ class MySpider(CrawlSpider):
             musters = pd.DataFrame({'work_code':[],'msr_no':[]},dtype=object)
         
         if os.path.isfile(output_dir+'/encountered_muster_links.csv'):
-            encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',header=None,names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],usecols=['msr_no','work_code','muster_url'],encoding='utf-8',dtype={'work_code':object,'msr_no':object,'muster_url':object})
+            encountered_muster_links = pd.read_csv(output_dir+'/encountered_muster_links.csv',
+                                                   header=None,
+                                                   names=['job_card', 'url', 'msr_no', 'muster_url', 'work_code'],
+                                                   usecols=['msr_no','work_code','muster_url'],
+                                                   encoding='utf-8',
+                                                   dtype={'work_code':object,'msr_no':object,'muster_url':object})
         else:
             encountered_muster_links = pd.DataFrame({'msr_no':[], 'muster_url':[], 'work_code':[]},dtype=object)
 
@@ -60,15 +63,15 @@ class MySpider(CrawlSpider):
     for muster in muster_list:
         start_urls.append(muster['muster_url'])
 
-
     def parse(self, response):
-        soup = BeautifulSoup(response.body_as_unicode(), 'lxml')
+        soup = BeautifulSoup(response.text, 'lxml')
         url = response.url
-        url = url.replace('%20',' ').strip()
+        url = url.replace('%20', ' ').strip()
         item_data = []
         # logging.info("Made it to the muster page for "+url) 
-        if soup.find_all('table')[2].find('b').text!='The Values specified are wrong, Please enter Proper values' and soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"})!=None:
-            par = urlparse.parse_qs(urlparse.urlparse(url).query)
+        if soup.find_all('table')[2].find('b').text != 'The Values specified are wrong, Please enter Proper values' and \
+           soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}) != None:
+            par = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
             panchayat = par['panchayat_code'][0]
             mrTopData = [
                 unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),
@@ -110,7 +113,6 @@ class MySpider(CrawlSpider):
                 item['work_name'] = item_data[24]
                 yield item
             else:
-
                 days = [] # Need to get which columns contain the days worked -- if the header is an integer, it's one of the days worked columns
                 for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
                     try:
@@ -162,7 +164,7 @@ class MySpider(CrawlSpider):
 
                     # Get the columns showing which days they were present and consolidate it into a single field            
                     temp_list += [
-                        ';'.join([str(p+1) if val.text.strip()=='P' else '' for p,val in enumerate(tr.find_all('td')[4:4+len(days)])])
+                        ';'.join([str(p+1) if val.text.strip()=='P' else '' for p, val in enumerate(tr.find_all('td')[4:4+len(days)])])
                     ]
 
                     # Get the rest of the columns in the row            
@@ -203,7 +205,6 @@ class MySpider(CrawlSpider):
                     item['work_approval_date'] = item_data[22]
                     item['work_code'] = item_data[23]
                     item['work_name'] = item_data[24]
-
                     yield item
 
         else:
