@@ -29,7 +29,7 @@ class MultiCSVItemPipeline(object):
         dispatcher.connect(self.spider_closed, signal=signals.spider_closed)
 
     def spider_opened(self, spider):
-        self.files = dict([(name, open(output_dir+'/'+name+'.csv', 'wb')) for name in self.SaveTypes])
+        self.files = dict([(name, open(output_dir+'/'+name+'.csv', 'ab')) for name in self.SaveTypes])
         self.exporters = dict([(name, CsvItemExporter(self.files[name])) for name in self.SaveTypes])
         [e.start_exporting() for e in self.exporters.values()]
 

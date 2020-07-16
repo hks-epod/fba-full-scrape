@@ -6,5 +6,7 @@
 .DS_Store
 *.sublime-project
 *.sublime-workspace
+input/
+full_output/
 venv/
 *~

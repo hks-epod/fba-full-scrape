@@ -158,7 +158,7 @@ class MySpider(CrawlSpider):
         job_card_table = soup.find_all('table')[1]
         job_card_rows = job_card_table.find_all('tr')
         top_data = list()
-        top_data = [panchayat,
+        top_data = [str(panchayat),
                     unidecode(job_card_rows[2].find_all('td')[1].text.encode('utf-8').decode('utf-8')),
                     unidecode(job_card_rows[3].find_all('td')[1].text.encode('utf-8').decode('utf-8')),
                     unidecode(job_card_rows[5].find_all('td')[1].text.encode('utf-8').decode('utf-8')),
@@ -228,11 +228,7 @@ class MySpider(CrawlSpider):
                     item['bank_po_name'] = item_data[17]
                     yield item
 
-        links = [link for link in response.xpath("//@href").extract()]
-        print("🥶🥵🤯 LINKS??? 🥶🥵😡")
-        print(links)
         muster_links = [link for link in response.xpath("//@href").extract() if 'musternew.aspx' in link]
-        # Get links to all muster rolls that individual has been listed on.
         for link in muster_links:
             par = urllib.parse.parse_qs(urllib.parse.urlparse(link).query)
             work_code = par['workcode'][0].encode('utf-8')
@@ -250,4 +246,8 @@ class MySpider(CrawlSpider):
                 muster_url = ('http://mnregaweb2.nic.in/netnrega'+link[2:]).replace(';', '').replace('%3b', '').replace('-', '%96').replace('%20', '+').replace('!', '')
                 with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
                     writer = csv.writer(f)
-                    writer.writerow([job_card.encode('utf-8'), url.encode('utf-8'), msr_no.encode('utf-8'), muster_url.encode('utf-8'), work_code.encode('utf-8')])
+                    writer.writerow([job_card.encode('utf-8'),
+                                     url.encode('utf-8'),
+                                     msr_no.encode('utf-8'),
+                                     muster_url.encode('utf-8'),
+                                     work_code.encode('utf-8')])
