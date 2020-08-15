@@ -10,7 +10,7 @@
 import os
 
 #date = datetime.date.today().strftime("%d%b%Y")
-output_dir = './full_output' #+date
+output_dir = './full_output'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
@@ -23,9 +23,9 @@ DOWNLOADER_MIDDLEWARES = {'scrapy.downloadermiddleware.retry.RetryMiddleware':No
 DOWNLOAD_HANDLERS = {
     's3': None
 }
-RETRY_TIMES = 19
-LOG_STDOUT = True
+RETRY_TIMES = 20
+# LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
-LOG_FILE = output_dir+'/log.txt'
+# LOG_FILE = output_dir+'/log.txt'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'fba_scrapy (+http://www.yourdomain.com)'

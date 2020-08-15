@@ -1,6 +1,7 @@
-import scrapy
 from fba_full_scrapy.items import JobcardItem
 from fba_full_scrapy.items import MusterItem
+import scrapy
+from scrapy import Selector
 from scrapy.http.request import Request
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
@@ -11,7 +12,7 @@ import datetime
 from unidecode import unidecode
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from scrapy import signals
+# from scrapy import signals
 import sys
 import urllib.parse
 import pandas as pd
@@ -19,21 +20,17 @@ import logging
 
 colors = {'active':['#00CC33','#D39027'],'inactive':['Red','Gray']}
 input_dir = './input'
-# os.makedirs(input_dir, exist_ok=True)
 gp_file = 'gp_list.csv'
-#date = datetime.date.today().strftime("%d%b%Y")
-output_dir = './full_output' #+date
+output_dir = './full_output'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 fin_year = '2020-2021'
 
-
-class MySpider(CrawlSpider):
+class JobcardSpider(CrawlSpider):
     name = "all_job_cards"
     
     def populate_job_card_urls():
-
         chromeOptions = webdriver.ChromeOptions()
 
         chromeOptions.add_argument("start-maximized")
@@ -60,15 +57,17 @@ class MySpider(CrawlSpider):
                 panchayat_code = row_in[3]
                 url = 'http://mnregaweb2.nic.in/netnrega/IndexFrame.aspx?lflag=eng&district_name='+district+'&state_name=MADHYA+PRADESH&state_Code=17&block_name='+block+'&fin_year='+fin_year+'&check=1&panchayat_name='+panchayat+'(P)'+'&panchayat_code='+panchayat_code
                 print(url)
+
                 try:
                     driver.get(url)
                     driver.find_element_by_xpath(".//*[contains(text(), 'Job card/Employment Register')]").click()
                 except:
                     print("Couldn't open directory for panchayat", panchayat)
                     continue
+                
                 soup = BeautifulSoup(driver.page_source, 'lxml')
                 active_job_cards = []
-                i =- 1
+                i = -1
                 # Identify HH's in panchayat with active job cards
                 try:
                     for tr in soup.find_all('table')[3].find_all('tr'):
@@ -228,26 +227,94 @@ class MySpider(CrawlSpider):
                     item['bank_po_name'] = item_data[17]
                     yield item
 
-        muster_links = [link for link in response.xpath("//@href").extract() if 'musternew.aspx' in link]
-        for link in muster_links:
-            par = urllib.parse.parse_qs(urllib.parse.urlparse(link).query)
-            work_code = par['workcode'][0].encode('utf-8')
-            msr_no = par['msrno'][0].encode('utf-8')
-            dt_from = par['dtfrm'][0]
-            day = int(dt_from[0:2])
-            month = int(dt_from[3:5])
-            year = int(dt_from[6:])
-            dt = datetime.date(year, month, day)
+        print("DONE WITH ADDING ITEMS 😩😏˜")
+        msr_table = soup.find('table', id="GridView3").find_all('tr')
+        msr_no_col = []
+        asset_link_col = []
 
-            # if not ((self.mr_tracker.msr_no==msr_no) & (self.mr_tracker.work_code==work_code)).any() and dt>=datetime.date(2015,9,1):
+        for row in msr_table:
+            el_len = len(row.find_all('td'))
+            if(el_len == 8):
+                msr_no = row.find_all('td')[5].text
+                asset_link = row.find_all('td')[5].a
+                if msr_no and asset_link:
+                    asset_link = 'https://mnregaweb2.nic.in/netnrega/' + asset_link['href'][3:]
+
+                    msr_no_col.append(msr_no.strip())
+                    asset_link_col.append(asset_link)
+
+        msr_df = pd.DataFrame(data={'msr_no': msr_no_col, 'link': asset_link_col})
+
+        chromeOptions = webdriver.ChromeOptions()
+
+        chromeOptions.add_argument("start-maximized")
+        chromeOptions.add_argument("enable-automation")
+        chromeOptions.add_argument("--headless")
+        chromeOptions.add_argument("--no-sandbox")
+        chromeOptions.add_argument("--disable-infobars")
+        chromeOptions.add_argument("--disable-dev-shm-usage")
+        chromeOptions.add_argument("--disable-browser-side-navigation")
+        chromeOptions.add_argument("--disable-gpu")
+
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options = chromeOptions)
+
+        for index, asset_link in msr_df.iterrows():
+            msr_no = asset_link['msr_no']
+            print("about to request MSR")
+            #request = scrapy.Request(asset_link['link'],
+            #              callback=self.parse_muster_links,
+            #              cb_kwargs={'msr_no': asset_link['msr_no'], 'job_card': job_card, 'url': url})
+
+            # print(request.cb_kwargs)
+
+            driver.get(asset_link['link'])
+            #msr_dict = request.meta['msr_dict']
+            #work_code = msr_dict['work_code']
+            #msr_link = msr_dict['msr_link']
+            
+            msr_link = driver.find_element_by_xpath("//a[contains(., "+msr_no+")]").get_attribute('href')
+            print("msr_link:", msr_link)
+            par = urllib.parse.parse_qs(urllib.parse.urlparse(msr_link).query)
+            work_code = par['workcode'][0].encode('utf-8')
+
+            print("work_code:", work_code)
+            print("link:", msr_link)
+
             if not ((self.mr_tracker.msr_no == msr_no) & (self.mr_tracker.work_code == work_code)).any():
 
                 self.mr_tracker = self.mr_tracker.append({'work_code':work_code,'msr_no':msr_no},ignore_index=True)
-                muster_url = ('http://mnregaweb2.nic.in/netnrega'+link[2:]).replace(';', '').replace('%3b', '').replace('-', '%96').replace('%20', '+').replace('!', '')
+                print("doing the mr_tracker thing 🥶🥶🥶👹")
+                # muster_url = ('http://mnregaweb2.nic.in/netnrega'+link[2:]).replace(';', '').replace('%3b', '').replace('-', '%96').replace('%20', '+').replace('!', '')
                 with open(output_dir+'/encountered_muster_links.csv', 'a') as f:
+                    print("about to write to CSV")
                     writer = csv.writer(f)
                     writer.writerow([job_card.encode('utf-8'),
                                      url.encode('utf-8'),
                                      msr_no.encode('utf-8'),
-                                     muster_url.encode('utf-8'),
-                                     work_code.encode('utf-8')])
+                                     msr_link.encode('utf-8'),
+                                     work_code])
+
+    #def parse_muster_links(self, response, msr_no, job_card, url):
+    #    print("in callback functioNONAIONDFIOAJDIOSJAOSDIJ")
+        #msr_no = response.meta.get('msr_no')
+        #job_card = response.meta.get('job_card')
+        #url = response.meta.get('url')
+
+        #msr_link = response.xpath("//a[contains(., "+msr_no+")]/@href").get()
+        #msr_link = "https://mnregaweb2.nic.in/netnrega/"+msr_link[6:]
+        #print("msr_link:", msr_link)
+
+        #par = urllib.parse.parse_qs(urllib.parse.urlparse(msr_link.query))
+        
+        #work_code = par['workcode'][0].encode('utf-8')
+        #dt_from = par['dtfrm'][0]
+        #day = int(dt_from[0:2])
+        #month = int(dt_from[3:5])
+        #year = int(dt_from[6:])
+        #dt = datetime.date(year, month, day)
+
+        #msr_dict = response.cb_kwargs['msr_dict']
+        #msr_dict['work_code'] = work_code
+        #msr_dict['msr_link'] = msr_link
+
+        #yield [msr_dict]
