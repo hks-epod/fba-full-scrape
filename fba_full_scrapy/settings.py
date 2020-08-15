@@ -24,8 +24,8 @@ DOWNLOAD_HANDLERS = {
     's3': None
 }
 RETRY_TIMES = 20
-# LOG_STDOUT = True
+LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
-# LOG_FILE = output_dir+'/log.txt'
+LOG_FILE = output_dir+'/log.txt'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'fba_scrapy (+http://www.yourdomain.com)'
