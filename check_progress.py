@@ -112,12 +112,16 @@ def check_muster_scrape():
     return msg
 
 def send_email(email_recipients, msg_string):
+    s = smtplib.SMTP('smtp.mailgun.org', 587)
+    #with open('password.txt', 'r') as f:
+	#password = f.read()
+    #password = '9db9446b166c39ebb2fda2bcb2293b3b-07e45e2a-6dbd4c5a'
+    s.login('postmaster@sandboxdf8537b17f3745c58b9d87370ed2eedd.mailgun.org', password)
     msg = MIMEText(msg_string)
     msg['Subject'] = 'FBA Scrape Progress'
-    msg['From'] = 'python@python.com'
+    msg['From'] = 'FBA Progress Tracker <postmaster@sandboxdf8537b17f3745c58b9d87370ed2eedd.mailgun.org>'
     msg['To'] = ','.join(email_recipients)
-    s = smtplib.SMTP('localhost:1025')
-    s.sendmail('test@test.com', email_recipients, msg.as_string())
+    s.sendmail('postmaster@sandboxdf8537b17f3745c58b9d87370ed2eedd.mailgun.org', email_recipients, msg.as_string())
     s.quit()
 
 if __name__ == '__main__':

@@ -10,3 +10,4 @@ input/
 full_output/
 venv/
 *~
+clean_b.py

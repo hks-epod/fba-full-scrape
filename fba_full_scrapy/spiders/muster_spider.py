@@ -70,23 +70,23 @@ class MySpider(CrawlSpider):
         item_data = []
         # logging.info("Made it to the muster page for "+url) 
         if soup.find_all('table')[2].find('b').text != 'The Values specified are wrong, Please enter Proper values' and \
-           soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}) != None:
+           soup.find("span", {"id": "ContentPlaceHolder1_lblMsrNo2"}) != None:
             par = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
-            panchayat = par['panchayat_code'][0]
+            panchayat = par['panchayat_name'][0]
             mrTopData = [
-                unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),
-                unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldatefrom"}).text.encode('utf-8').strip().decode('utf-8')),
-                unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lbldateto"}).text.encode('utf-8').strip().decode('utf-8')),
-                unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblSanctionDate"}).text.encode('utf-8').strip().decode('utf-8')),
-                unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkCode"}).text.encode('utf-8').strip().decode('utf-8')),
-                unidecode(soup.find("span", {"id": "ctl00_ContentPlaceHolder1_lblWorkName"}).text.encode('utf-8').strip().decode('utf-8'))
+                unidecode(soup.find("span", {"id": "ContentPlaceHolder1_lblMsrNo2"}).text.encode('utf-8').strip().decode('utf-8')),
+                unidecode(soup.find("span", {"id": "ContentPlaceHolder1_lbldatefrom"}).text.encode('utf-8').strip().decode('utf-8')),
+                unidecode(soup.find("span", {"id": "ContentPlaceHolder1_lbldateto"}).text.encode('utf-8').strip().decode('utf-8')),
+                unidecode(soup.find("span", {"id": "ContentPlaceHolder1_lblSanctionDate"}).text.encode('utf-8').strip().decode('utf-8')),
+                unidecode(soup.find("span", {"id": "ContentPlaceHolder1_lblWorkCode"}).text.encode('utf-8').strip().decode('utf-8')),
+                unidecode(soup.find("span", {"id": "ContentPlaceHolder1_lblWorkName"}).text.encode('utf-8').strip().decode('utf-8'))
             ]
 
             # If link doesnt work (ie table doesn't show up), put empty rows/cols
-            if soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'})==None:
+            if soup.find('table', {'id':'ContentPlaceHolder1_grdShowRecords'})==None:
                 item_data = [panchayat,'','','','','','','','','','','','','','','','','','']+mrTopData
                 item = MusterItem()
-                item['panchayat_code'] = item_data[0]
+                item['panchayat_name'] = item_data[0]
                 item['job_card_number'] = item_data[1]
                 item['worker_name'] = item_data[2]
                 item['sc_st_category'] = item_data[3]
@@ -114,7 +114,7 @@ class MySpider(CrawlSpider):
                 yield item
             else:
                 days = [] # Need to get which columns contain the days worked -- if the header is an integer, it's one of the days worked columns
-                for th in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
+                for th in soup.find('table', {'id':'ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th'):
                     try:
                         int(th.text)
                         days.append(th.text)
@@ -143,19 +143,19 @@ class MySpider(CrawlSpider):
                 ]
 
                 # Check the number of muster column headers
-                if len(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')) != len(muster_headers):
+                if len(soup.find('table', {'id':'ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')) != len(muster_headers):
                     logging.info("Found the wrong number of muster column headers for url: " + url)
 
                 # Check if the column headers have changed
                 headers_correct = True
-                for i,th in enumerate(soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')):
+                for i,th in enumerate(soup.find('table', {'id':'ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[0].find_all('th')):
                     test = th.text.strip()==muster_headers[i].strip()
                     if test==False:
                         headers_correct = False
                 if headers_correct==False:
                     logging.info("Incorrect muster column headers found for url: "+url)
 
-                for tr in soup.find('table', {'id':'ctl00_ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[1:-1]:
+                for tr in soup.find('table', {'id':'ContentPlaceHolder1_grdShowRecords'}).find_all('tr')[1:-1]:
                     
                     # Get SC/ST status, Village name
                     temp_list = [
@@ -180,7 +180,7 @@ class MySpider(CrawlSpider):
                     ] + temp_list + mrTopData
 
                     item = MusterItem()
-                    item['panchayat_code'] = item_data[0]
+                    item['panchayat_name'] = item_data[0]
                     item['job_card_number'] = item_data[1]
                     item['worker_name'] = item_data[2]
                     item['sc_st_category'] = item_data[3]

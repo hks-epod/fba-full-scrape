@@ -29,7 +29,7 @@ class JobcardItem(scrapy.Item):
     pass
 
 class MusterItem(scrapy.Item):
-    panchayat_code = scrapy.Field()
+    panchayat_name = scrapy.Field()
     job_card_number = scrapy.Field()
     worker_name = scrapy.Field()
     sc_st_category = scrapy.Field()
